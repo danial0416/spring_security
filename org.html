@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="team, organization, cybersecurity, members" />
+  <meta name="description" content="Meet our cybersecurity team" />
+  <meta name="author" content="Spring Security Team" />
+  <title>Our Team - Spring Security</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <!-- AOS CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <style>
+    /* Base & Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Poppins', sans-serif; background: #000; color: #fff; }
+    a { color: #ccc; text-decoration: none; transition: color .3s; }
+    a:hover { color: #0ff; }
+
+    /* Progress Bar */
+    #progress-bar { position: fixed; top: 0; left: 0; width: 0; height: 4px; background: #0ff; z-index: 9999; }
+
+    /* Background Canvas */
+    #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+    /* Navbar */
+    .navbar { background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(10px); padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0, 255, 255, 0.3); box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+    .navbar-brand { display: flex; align-items: center; font-size: 1.25rem; }
+    .navbar-brand span { margin-left: 8px; color: #0ff; font-weight: bold; font-size: 1.3rem; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link { color: #ccc !important; position: relative; padding: .5rem 1rem; transition: all 0.3s; font-weight: 500; }
+    .navbar-nav .nav-link::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 0%; height: 2px; background: #0ff; transition: 0.3s ease-out; }
+    .navbar-nav .nav-link:hover { color: #0ff !important; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link:hover::after { width: 80%; }
+    .navbar-nav .nav-link.active { color: #0ff !important; text-shadow: 0 0 8px #0ff; }
+    .navbar-nav .nav-link.active::after { width: 80%; }
+
+    /* Team Hero */
+    .team-hero { height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+    .team-hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.3)); z-index: 1; }
+    .team-hero video { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); min-width: 100%; min-height: 100%; z-index: 0; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; padding: 0 20px; }
+    .team-title { font-size: 4rem; font-weight: 700; color: #0ff; text-shadow: 0 0 20px rgba(0, 255, 255, 0.7); margin-bottom: 1rem; }
+    .team-subtitle { font-size: 1.5rem; color: #fff; margin-bottom: 2rem; }
+
+    /* Team Section */
+    .team-section { padding: 80px 0; }
+    .section-title { text-align: center; margin-bottom: 50px; color: #0ff; font-weight: 700; font-size: 2.5rem; text-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; max-width: 1300px; margin: 0 auto; padding: 0 20px; }
+
+    /* Team Card */
+    .team-card { background: rgba(0, 10, 15, 0.7); border: 1px solid #0aa; border-radius: 10px; overflow: hidden; transition: all 0.5s ease; position: relative; z-index: 1; }
+    .team-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0, 255, 255, 0.3); border-color: #0ff; }
+    .team-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, transparent 100%); opacity: 0; transition: opacity 0.3s; z-index: -1; }
+    .team-card:hover::before { opacity: 1; }
+    .team-img-container { height: 350px; overflow: hidden; position: relative; }
+    .team-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .team-card:hover .team-img { transform: scale(1.05); }
+    .team-social { position: absolute; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: center; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
+    .team-card:hover .team-social { opacity: 1; transform: translateY(0); }
+    .social-link { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(0,0,0,0.7); border-radius: 50%; margin: 0 5px; color: #0ff; font-size: 1.2rem; transition: all 0.3s; }
+    .social-link:hover { background: #0ff; color: #000; transform: translateY(-5px); }
+    .team-content { padding: 25px; text-align: center; }
+    .team-name { font-size: 1.5rem; font-weight: 600; margin-bottom: 5px; color: #fff; }
+    .team-position { color: #0ff; font-size: 1rem; margin-bottom: 15px; }
+    .team-bio { color: #ccc; line-height: 1.6; margin-bottom: 20px; }
+    .team-stats { display: flex; justify-content: space-around; }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 1.8rem; font-weight: 700; color: #0ff; }
+    .stat-label { font-size: 0.9rem; color: #aaa; }
+
+    /* Team Modal */
+    .team-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000; display: none; overflow-y: auto; }
+    .modal-content { background: #000; max-width: 900px; margin: 50px auto; border: 1px solid #0ff; border-radius: 10px; overflow: hidden; position: relative; }
+    .modal-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 1.5rem; cursor: pointer; z-index: 1; transition: color 0.3s; }
+    .modal-close:hover { color: #0ff; }
+    .modal-header { display: grid; grid-template-columns: 1fr 2fr; }
+    .modal-img { width: 100%; height: 100%; object-fit: cover; }
+    .modal-header-content { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+    .modal-name { font-size: 2rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
+    .modal-position { color: #0ff; font-size: 1.2rem; margin-bottom: 20px; }
+    .modal-social { display: flex; margin-bottom: 20px; }
+    .modal-body { padding: 0 40px 40px; }
+    .modal-section { margin-bottom: 30px; }
+    .modal-section-title { color: #0ff; font-size: 1.3rem; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #0aa; }
+    .modal-text { color: #ccc; line-height: 1.8; }
+
+    /* Skills Section */
+    .skills-section { padding: 80px 0; background: rgba(0, 20, 30, 0.5); }
+    .skills-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; margin-top: 50px; }
+    .skill-card { background: rgba(0, 10, 15, 0.7); border: 1px solid #0aa; border-radius: 10px; padding: 30px; transition: all 0.3s; }
+    .skill-card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2); border-color: #0ff; }
+    .skill-icon { font-size: 2.5rem; color: #0ff; margin-bottom: 20px; }
+    .skill-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 15px; color: #fff; }
+    .skill-desc { color: #ccc; line-height: 1.6; }
+
+    /* Footer */
+    footer { background: #000; color: #aaa; text-align: center; padding: 30px 0; border-top: 1px solid rgba(0, 255, 255, 0.2); }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(0, 255, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+    }
+    @keyframes glitch {
+      0% { text-shadow: 0 0 10px #0ff; }
+      25% { text-shadow: -5px -5px 10px #f0f; }
+      50% { text-shadow: 5px 5px 10px #0f0; }
+      75% { text-shadow: -5px 5px 10px #00f; }
+      100% { text-shadow: 0 0 10px #0ff; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .team-title { font-size: 2.5rem; }
+      .team-subtitle { font-size: 1.2rem; }
+      .modal-header { grid-template-columns: 1fr; }
+      .modal-img { height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <canvas id="bgCanvas"></canvas>
+  <audio id="clickSound" src="sounds/click.mp3" preload="auto"></audio>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"> <img src="images/logo.png" height="40" alt="logo"><span>Spring Security</span></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="news.html">News</a></li>
+          <li class="nav-item"><a class="nav-link" href="case.html">Cases</a></l>
+          <li class="nav-item"><a class="nav-link" href="quiz.html">Quiz</a></li>
+          <li class="nav-item"><a class="nav-link active" href="org.html">Organization</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="more.html">More</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Team Hero -->
+  <section class="team-hero">
+    <video autoplay muted loop>
+      <source src="videos/team_bg.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content" data-aos="fade-up">
+      <h1 class="team-title">Our Team</h1>
+      <p class="team-subtitle">Meet the cybersecurity experts protecting your digital world</p>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="team-section">
+    <h2 class="section-title" data-aos="fade-up">The Guardians</h2>
+    <div class="team-grid">
+      <!-- Team Member 1 -->
+      <div class="team-card" data-aos="fade-up" data-aos-delay="100" data-member="1">
+        <div class="team-img-container">
+          <img src="profile_images/danial.png" alt="Team Member" class="team-img">
+          <div class="team-social">
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="team-content">
+          <h3 class="team-name">Syed Danial</h3>
+          <p class="team-position">Chief Security Officer</p>
+          <p class="team-bio">10+ years experience in penetration testing and vulnerability research.</p>
+          <div class="team-stats">
+            <div class="stat-item">
+              <div class="stat-number">150+</div>
+              <div class="stat-label">Vulnerabilities Found</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">98%</div>
+              <div class="stat-label">Success Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Member 2 -->
+      <div class="team-card" data-aos="fade-up" data-aos-delay="200" data-member="2">
+        <div class="team-img-container">
+          <img src="profile_images/serti.png" alt="Team Member" class="team-img">
+          <div class="team-social">
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="team-content">
+          <h3 class="team-name">Seertinban</h3>
+          <p class="team-position">Lead Threat Analyst</p>
+          <p class="team-bio">Specializes in social engineering defense and phishing countermeasures.</p>
+          <div class="team-stats">
+            <div class="stat-item">
+              <div class="stat-number">500+</div>
+              <div class="stat-label">Phishing Kits Analyzed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">99.7%</div>
+              <div class="stat-label">Detection Accuracy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Member 3 -->
+      <div class="team-card" data-aos="fade-up" data-aos-delay="300" data-member="3">
+        <div class="team-img-container">
+          <img src="profile_images/hariz.png" alt="Team Member" class="team-img">
+          <div class="team-social">
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="team-content">
+          <h3 class="team-name">Hariz Iman</h3>
+          <p class="team-position">Security Architect</p>
+          <p class="team-bio">Designs unbreakable systems and security protocols for enterprises.</p>
+          <div class="team-stats">
+            <div class="stat-item">
+              <div class="stat-number">200+</div>
+              <div class="stat-label">Systems Secured</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">0</div>
+              <div class="stat-label">Breaches</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Member 4 -->
+      <div class="team-card" data-aos="fade-up" data-aos-delay="400" data-member="4">
+        <div class="team-img-container">
+          <img src="profile_images/haikal.png" alt="Team Member" class="team-img">
+          <div class="team-social">
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="team-content">
+          <h3 class="team-name">Haikal</h3>
+          <p class="team-position">Forensics Expert</p>
+          <p class="team-bio">Tracks digital footprints and uncovers hidden threats in networks.</p>
+          <div class="team-stats">
+            <div class="stat-item">
+              <div class="stat-number">100%</div>
+              <div class="stat-label">Case Resolution</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">1k+</div>
+              <div class="stat-label">Incidents Investigated</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Member 5 -->
+      <div class="team-card" data-aos="fade-up" data-aos-delay="500" data-member="5">
+        <div class="team-img-container">
+          <img src="profile_images/lysa.png" alt="Team Member" class="team-img">
+          <div class="team-social">
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="team-content">
+          <h3 class="team-name">Putri Lysa</h3>
+          <p class="team-position">Security Educator</p>
+          <p class="team-bio">Develops training programs to turn employees into human firewalls.</p>
+          <div class="team-stats">
+            <div class="stat-item">
+              <div class="stat-number">85%</div>
+              <div class="stat-label">Reduction in Clicks</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">10k+</div>
+              <div class="stat-label">People Trained</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="skills-section">
+    <div class="skills-container">
+      <h2 class="section-title" data-aos="fade-up">Our Expertise</h2>
+      <div class="skills-grid">
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="skill-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3 class="skill-title">Threat Prevention</h3>
+          <p class="skill-desc">Proactive measures to stop attacks before they happen using advanced AI and behavioral analysis.</p>
+        </div>
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="skill-icon"><i class="fas fa-search"></i></div>
+          <h3 class="skill-title">Vulnerability Assessment</h3>
+          <p class="skill-desc">Comprehensive scanning to identify weaknesses in your systems before attackers do.</p>
+        </div>
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="skill-icon"><i class="fas fa-user-secret"></i></div>
+          <h3 class="skill-title">Social Engineering Defense</h3>
+          <p class="skill-desc">Specialized training to recognize and resist phishing, pretexting, and other human-targeted attacks.</p>
+        </div>
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="400">
+          <div class="skill-icon"><i class="fas fa-lock"></i></div>
+          <h3 class="skill-title">Encryption Solutions</h3>
+          <p class="skill-desc">State-of-the-art cryptographic protections for data at rest and in transit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Modal -->
+  <div class="team-modal" id="team-modal">
+    <div class="modal-content">
+      <span class="modal-close" id="modal-close">&times;</span>
+      <div class="modal-header">
+        <img src="" alt="Team Member" class="modal-img" id="modal-img">
+        <div class="modal-header-content">
+          <h2 class="modal-name" id="modal-name"></h2>
+          <p class="modal-position" id="modal-position"></p>
+          <div class="modal-social">
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+          </div>
+          <div class="team-stats" id="modal-stats"></div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <h3 class="modal-section-title">About</h3>
+          <div class="modal-text" id="modal-about"></div>
+        </div>
+        <div class="modal-section">
+          <h3 class="modal-section-title">Experience</h3>
+          <div class="modal-text" id="modal-experience"></div>
+        </div>
+        <div class="modal-section">
+          <h3 class="modal-section-title">Education</h3>
+          <div class="modal-text" id="modal-education"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer data-aos="fade-up">
+    <div class="container">
+      &copy; <span id="year"></span> Spring Security. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Team Data
+    const teamMembers = {
+      1: {
+        name: "Syed Danial",
+        position: "Chief Security Officer",
+        image: "profile_images/danial.png",
+        stats: `
+          <div class="stat-item">
+            <div class="stat-number">150+</div>
+            <div class="stat-label">Vulnerabilities Found</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Success Rate</div>
+          </div>
+        `,
+        about: "Danial has dedicated his career to breaking systems so they can be made unbreakable. With over a decade of experience in penetration testing, he's uncovered critical vulnerabilities in systems used by Fortune 500 companies and government agencies.",
+        experience: "Former lead penetration tester at CyberSec Global. Developed the 'Chen Methodology' for comprehensive system testing. Speaker at Black Hat and DEF CON conferences.",
+        education: "PhD in Cybersecurity from MIT, Certified Ethical Hacker (CEH), Offensive Security Certified Professional (OSCP)"
+      },
+      2: {
+        name: "Seertinban",
+        position: "Lead Threat Analyst",
+        image: "profile_images/serti.png",
+        stats: `
+          <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Phishing Kits Analyzed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">99.7%</div>
+            <div class="stat-label">Detection Accuracy</div>
+          </div>
+        `,
+        about: "Seertinban is our resident phishing expert who can spot a fake email from a mile away. She specializes in reverse-engineering phishing kits and tracking down the criminal networks behind them.",
+        experience: "Former FBI cybercrime analyst. Developed behavioral models to predict emerging phishing trends. Creator of the 'Johnson Phish Scale' for threat classification.",
+        education: "MSc in Digital Forensics from Carnegie Mellon, Certified Fraud Examiner (CFE), GIAC Certified Forensic Analyst (GCFA)"
+      },
+      3: {
+        name: "Hariz Iman",
+        position: "Security Architect",
+        image: "profile_images/hariz.png",
+        stats: `
+          <div class="stat-item">
+            <div class="stat-number">200+</div>
+            <div class="stat-label">Systems Secured</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Breaches</div>
+          </div>
+        `,
+        about: "Hariz designs security systems with the precision of a master architect. His zero-trust frameworks have become industry standards for enterprise protection.",
+        experience: "Former security lead at Amazon Web Services. Developed the 'Wong Layered Defense' model. Patent holder for three innovative security protocols.",
+        education: "BS in Computer Science from Stanford, CISSP, CCSP, AWS Certified Security Specialty"
+      },
+      4: {
+        name: "Haikal",
+        position: "Forensics Expert",
+        image: "profile_images/haikal.png",
+        stats: `
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Case Resolution</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">1k+</div>
+            <div class="stat-label">Incidents Investigated</div>
+          </div>
+        `,
+        about: "Haikal is our digital detective who can find a needle in a haystack of logs. he's solved cases that stumped law enforcement and helped bring numerous cybercriminals to justice.",
+        experience: "Former Interpol cybercrime investigator. Developed novel techniques for cryptocurrency transaction tracing. Consultant for high-profile data breach cases.",
+        education: "JD in Cyber Law from Harvard, EnCase Certified Examiner (EnCE), Certified Computer Examiner (CCE)"
+      },
+      5: {
+        name: "Putri Lysa",
+        position: "Security Educator",
+        image: "profile_images/lysa.png",
+        stats: `
+          <div class="stat-item">
+            <div class="stat-number">85%</div>
+            <div class="stat-label">Reduction in Clicks</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">10k+</div>
+            <div class="stat-label">People Trained</div>
+          </div>
+        `,
+        about: "Lysa transforms employees from security risks into human firewalls. Her engaging training programs have dramatically reduced successful phishing attacks at client organizations.",
+        experience: "Former cybersecurity instructor at the SANS Institute. Developed the 'Kim Engagement Method' for security awareness training. TEDx speaker on human factors in cybersecurity.",
+        education: "MA in Educational Psychology from Columbia, Security Awareness Practitioner (SAP), Certified Security Awareness Manager (CSAM)"
+      }
+    };
+
+    // Initialize Three.js Background
+    const canvas = document.getElementById('bgCanvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); 
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene(); 
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); 
+    camera.position.z = 5;
+    
+    // Create cyber grid
+    const gridHelper = new THREE.GridHelper(20, 20, 0x00ffff, 0x00ffff);
+    gridHelper.material.opacity = 0.1;
+    gridHelper.material.transparent = true;
+    scene.add(gridHelper);
+    
+    // Create floating cyber elements
+    const cyberElements = [];
+    const elementGeometry = new THREE.TetrahedronGeometry(0.1, 0);
+    const elementMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
+    
+    for (let i = 0; i < 50; i++) {
+      const element = new THREE.Mesh(elementGeometry, elementMaterial);
+      element.position.set(
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10
+      );
+      element.userData = {
+        speed: Math.random() * 0.02 + 0.01,
+        direction: new THREE.Vector3(
+          Math.random() - 0.5,
+          Math.random() - 0.5,
+          Math.random() - 0.5
+        ).normalize()
+      };
+      scene.add(element);
+      cyberElements.push(element);
+    }
+    
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      gridHelper.rotation.x += 0.001;
+      gridHelper.rotation.y += 0.002;
+      
+      cyberElements.forEach(element => {
+        element.position.addScaledVector(element.userData.direction, element.userData.speed);
+        if (Math.abs(element.position.x) > 5) element.userData.direction.x *= -1;
+        if (Math.abs(element.position.y) > 5) element.userData.direction.y *= -1;
+        if (Math.abs(element.position.z) > 5) element.userData.direction.z *= -1;
+        if (Math.random() < 0.01) {
+          element.userData.direction.add(
+            new THREE.Vector3(
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2
+            )
+          ).normalize();
+        }
+      });
+      
+      renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Initialize AOS
+    AOS.init({ duration: 1000, once: true });
+
+    // Scroll progress bar
+    window.addEventListener('scroll', () => {
+      const percent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      document.getElementById('progress-bar').style.width = percent + '%';
+    });
+
+    // Play click sound on nav link click
+    const clickSound = document.getElementById('clickSound');
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      });
+    });
+
+    // Team Modal Functionality
+    document.querySelectorAll('.team-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const memberId = this.getAttribute('data-member');
+        const member = teamMembers[memberId];
+        
+        document.getElementById('modal-name').textContent = member.name;
+        document.getElementById('modal-position').textContent = member.position;
+        document.getElementById('modal-img').src = member.image;
+        document.getElementById('modal-stats').innerHTML = member.stats;
+        document.getElementById('modal-about').textContent = member.about;
+        document.getElementById('modal-experience').textContent = member.experience;
+        document.getElementById('modal-education').textContent = member.education;
+        
+        document.getElementById('team-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // Close modal
+    document.getElementById('modal-close').addEventListener('click', function() {
+      document.getElementById('team-modal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+
+        // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+      if (e.target === document.getElementById('team-modal')) {
+        document.getElementById('team-modal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        
+        // Reset all typing animations
+        document.querySelectorAll('.modal-text').forEach(el => {
+          el.style.animation = 'none';
+          el.offsetHeight; // Trigger reflow
+          el.style.animation = null;
+        });
+      }
+    });
+
+    // Enhanced modal close with animation
+    document.getElementById('modal-close').addEventListener('click', function() {
+      const modal = document.getElementById('team-modal');
+      modal.style.opacity = '0';
+      modal.style.transition = 'opacity 0.3s ease';
+      
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.style.opacity = '1';
+        document.body.style.overflow = 'auto';
+      }, 300);
+      
+      // Create closing particle effect
+      createParticles(this, 15, '#f00');
+    });
+
+    // Smooth modal opening
+    function openModal() {
+      const modal = document.getElementById('team-modal');
+      modal.style.display = 'block';
+      modal.style.opacity = '0';
+      
+      setTimeout(() => {
+        modal.style.opacity = '1';
+        modal.style.transition = 'opacity 0.3s ease';
+      }, 10);
+      
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Improved typing animation with cursor
+    function typeWriter(element, text, speed) {
+      let i = 0;
+      element.innerHTML = '';
+      element.classList.add('typing');
+      
+      function type() {
+        if (i < text.length) {
+          element.innerHTML = text.substring(0, i+1) + '<span class="cursor">|</span>';
+          i++;
+          setTimeout(type, speed);
+        } else {
+          element.innerHTML = text;
+          element.classList.remove('typing');
+        }
+      }
+      type();
+    }
+
+    // Add cursor blink animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+      .cursor {
+        animation: blink 1s infinite;
+        color: #0ff;
+      }
+      .typing {
+        border-right: 2px solid #0ff;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Enhanced team card click with ripple effect
+    document.querySelectorAll('.team-card').forEach(card => {
+      card.addEventListener('click', function(e) {
+        // Create ripple effect
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple-effect';
+        ripple.style.left = `${e.clientX - this.getBoundingClientRect().left}px`;
+        ripple.style.top = `${e.clientY - this.getBoundingClientRect().top}px`;
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 1000);
+        
+        // Open modal after slight delay
+        setTimeout(openModal, 200);
+        
+        const memberId = this.getAttribute('data-member');
+        const member = teamMembers[memberId];
+        
+        // Set member data
+        document.getElementById('modal-name').textContent = member.name;
+        document.getElementById('modal-position').textContent = member.position;
+        document.getElementById('modal-img').src = member.image;
+        document.getElementById('modal-stats').innerHTML = member.stats;
+        
+        // Clear previous content
+        ['modal-about', 'modal-experience', 'modal-education'].forEach(id => {
+          document.getElementById(id).textContent = '';
+        });
+        
+        // Type out content with delays
+        setTimeout(() => typeWriter(document.getElementById('modal-about'), member.about, 10), 300);
+        setTimeout(() => typeWriter(document.getElementById('modal-experience'), member.experience, 10), 600);
+        setTimeout(() => typeWriter(document.getElementById('modal-education'), member.education, 10), 900);
+      });
+    });
+
+    // Add ripple effect CSS
+    const rippleStyle = document.createElement('style');
+    rippleStyle.textContent = `
+      .ripple-effect {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(0, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+        width: 20px;
+        height: 20px;
+      }
+      @keyframes ripple {
+        to {
+          transform: scale(10);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(rippleStyle);
+
+    </script>

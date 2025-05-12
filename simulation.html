@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="phishing, simulation, cybersecurity, test" />
+  <meta name="description" content="Interactive phishing simulation experience" />
+  <meta name="author" content="Spring Security Team" />
+  <title>Phishing Simulation - Spring Security</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <!-- AOS CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <style>
+    /* Base & Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Poppins', sans-serif; background: #000; color: #fff; }
+    a { color: #ccc; text-decoration: none; transition: color .3s; }
+    a:hover { color: #0ff; }
+
+    /* Progress Bar */
+    #progress-bar { position: fixed; top: 0; left: 0; width: 0; height: 4px; background: #0ff; z-index: 9999; }
+
+    /* Background Canvas */
+    #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+    /* Navbar */
+    .navbar { background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(10px); padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0, 255, 255, 0.3); box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+    .navbar-brand { display: flex; align-items: center; font-size: 1.25rem; }
+    .navbar-brand span { margin-left: 8px; color: #0ff; font-weight: bold; font-size: 1.3rem; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link { color: #ccc !important; position: relative; padding: .5rem 1rem; transition: all 0.3s; font-weight: 500; }
+    .navbar-nav .nav-link::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 0%; height: 2px; background: #0ff; transition: 0.3s ease-out; }
+    .navbar-nav .nav-link:hover { color: #0ff !important; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link:hover::after { width: 80%; }
+    .navbar-nav .nav-link.active { color: #0ff !important; text-shadow: 0 0 8px #0ff; }
+    .navbar-nav .nav-link.active::after { width: 80%; }
+
+    /* Simulation Hero */
+    .simulation-hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+    .simulation-hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.3)); z-index: 1; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; padding: 0 20px; }
+    .simulation-title { font-size: 3.5rem; font-weight: 700; color: #0ff; text-shadow: 0 0 20px rgba(0, 255, 255, 0.7); margin-bottom: 1rem; }
+    .simulation-subtitle { font-size: 1.5rem; color: #fff; margin-bottom: 2rem; }
+    .start-btn { display: inline-block; background: #0aa; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 1.2rem; font-weight: bold; margin-top: 30px; transition: all 0.3s; border: none; cursor: pointer; position: relative; overflow: hidden; }
+    .start-btn:hover { background: #0ff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); transform: translateY(-3px); }
+    .start-btn::before { content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; background: linear-gradient(45deg, transparent 45%, #0ff 50%, transparent 55%); background-size: 200% 200%; animation: glitch 2s infinite; opacity: 0.5; pointer-events: none; }
+
+    /* Simulation Stages */
+    .simulation-stage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .stage-content { background: rgba(0,10,20,0.9); border: 1px solid #0ff; border-radius: 10px; padding: 40px; max-width: 800px; width: 90%; position: relative; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); transform: scale(0.9); opacity: 0; transition: all 0.5s ease; }
+    .stage-content.active { transform: scale(1); opacity: 1; }
+    .stage-title { color: #0ff; font-size: 2rem; margin-bottom: 20px; }
+    .stage-text { color: #ccc; line-height: 1.7; margin-bottom: 30px; }
+    .stage-btn { background: #0aa; color: #fff; border: none; padding: 12px 30px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+    .stage-btn:hover { background: #0ff; box-shadow: 0 0 15px rgba(0, 255, 255, 0.5); }
+    .close-stage { position: absolute; top: 15px; right: 15px; color: #fff; font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
+    .close-stage:hover { color: #0ff; }
+
+    /* Fake Login */
+    .fake-login { background: #fff; border-radius: 8px; padding: 30px; width: 350px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
+    .fake-logo { width: 100px; margin-bottom: 20px; }
+    .fake-title { color: #333; font-size: 1.5rem; margin-bottom: 20px; }
+    .fake-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
+    .fake-submit { width: 100%; padding: 12px; background: #0aa; color: #fff; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+    .fake-submit:hover { background: #0ff; }
+    .fake-footer { margin-top: 20px; color: #777; font-size: 0.9rem; }
+
+    /* Hacker Reveal */
+    .hacker-reveal { text-align: center; }
+    .hacker-image { width: 200px; margin: 0 auto 30px; animation: pulse 2s infinite; }
+    .warning-message { color: #f00; font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,0,0,0.5); animation: blink 1.5s infinite; }
+    .security-tip { background: rgba(0,50,50,0.3); border-left: 3px solid #0ff; padding: 15px; margin: 20px 0; text-align: left; }
+
+    /* Animations */
+    @keyframes glitch {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 100% 100%; }
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    /* Particles */
+    .particle { position: absolute; background: #0ff; border-radius: 50%; pointer-events: none; z-index: -1; }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <canvas id="bgCanvas"></canvas>
+  <audio id="clickSound" src="sounds/click.mp3" preload="auto"></audio>
+  <audio id="alertSound" src="sounds/alert.mp3" preload="auto"></audio>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"> <img src="images/logo.png" height="40" alt="logo"><span>Spring Security</span></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="news.html">News</a></li>
+          <li class="nav-item"><a class="nav-link" href="case.html">Cases</a></l>
+          <li class="nav-item"><a class="nav-link" href="quiz.html">Quiz</a></li>
+          <li class="nav-item"><a class="nav-link" href="org.html">Organization</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="more.html">More</a></l>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Simulation Hero -->
+  <section class="simulation-hero">
+    <div class="hero-content" data-aos="fade-up">
+      <h1 class="simulation-title">Let’s join our free phishing awareness class!!</h1>
+      <p class="simulation-subtitle">Click the button below to sign up and start learning in a safe</p>
+      <button class="start-btn" id="start-simulation">
+        <span class="btn-glitch"></span>
+        <span class="btn-text">Click here</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Simulation Stages -->
+  <div class="simulation-stage" id="stage1">
+    <div class="stage-content">
+      <span class="close-stage" id="close-stage1">&times;</span>
+      <h2 class="stage-title">Security Alert: Action Required</h2>
+      <p class="stage-text">Our system has detected unusual activity on your account. To prevent unauthorized access, please verify your identity immediately.</p>
+      <p class="stage-text">This is a standard security procedure to protect your account from potential threats.</p>
+      <button class="stage-btn" id="next-stage1">Verify Now</button>
+    </div>
+  </div>
+
+  <div class="simulation-stage" id="stage2">
+    <div class="stage-content">
+      <div class="fake-login">
+        <img src="images/logo.png" alt="Login" class="fake-logo">
+        <h3 class="fake-title">Account Verification</h3>
+        <input type="text" class="fake-input" placeholder="Email Address">
+        <input type="password" class="fake-input" placeholder="Password">
+        <button class="fake-submit" id="fake-submit">Continue</button>
+        <p class="fake-footer">By continuing, you agree to our Terms of Service</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="simulation-stage" id="stage3">
+    <div class="stage-content">
+      <span class="close-stage" id="close-stage3">&times;</span>
+      <div class="hacker-reveal">
+        <img src="logo.png" alt="Hacker" class="hacker-image">
+        <h2 class="warning-message">SECURITY BREACH DETECTED!</h2>
+        <p class="stage-text">You just fell for a simulated phishing attack! This is exactly how real hackers try to steal your credentials.</p>
+        
+        <div class="security-tip">
+          <h3>What just happened?</h3>
+          <p>You clicked on a fake security alert and entered your information on a page that looked legitimate but was actually a trap.</p>
+        </div>
+        
+        <div class="security-tip">
+          <h3>How to spot these attacks:</h3>
+          <ul>
+            <li>Check the URL carefully - it often looks almost correct but has small differences</li>
+            <li>Legitimate companies won't ask for sensitive info via email links</li>
+            <li>Look for poor grammar or unusual formatting</li>
+            <li>Hover over links to see the real destination before clicking</li>
+          </ul>
+        </div>
+        
+        <button class="stage-btn" id="learn-more">Learn More About Phishing</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Three.js Background
+    const canvas = document.getElementById('bgCanvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); 
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene(); 
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); 
+    camera.position.z = 5;
+    
+    // Create cyber grid
+    const gridHelper = new THREE.GridHelper(20, 20, 0x00ffff, 0x00ffff);
+    gridHelper.material.opacity = 0.1;
+    gridHelper.material.transparent = true;
+    scene.add(gridHelper);
+    
+    // Create floating cyber elements
+    const cyberElements = [];
+    const elementGeometry = new THREE.TetrahedronGeometry(0.1, 0);
+    const elementMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
+    
+    for (let i = 0; i < 50; i++) {
+      const element = new THREE.Mesh(elementGeometry, elementMaterial);
+      element.position.set(
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10
+      );
+      element.userData = {
+        speed: Math.random() * 0.02 + 0.01,
+        direction: new THREE.Vector3(
+          Math.random() - 0.5,
+          Math.random() - 0.5,
+          Math.random() - 0.5
+        ).normalize()
+      };
+      scene.add(element);
+      cyberElements.push(element);
+    }
+    
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      gridHelper.rotation.x += 0.001;
+      gridHelper.rotation.y += 0.002;
+      
+      cyberElements.forEach(element => {
+        element.position.addScaledVector(element.userData.direction, element.userData.speed);
+        if (Math.abs(element.position.x) > 5) element.userData.direction.x *= -1;
+        if (Math.abs(element.position.y) > 5) element.userData.direction.y *= -1;
+        if (Math.abs(element.position.z) > 5) element.userData.direction.z *= -1;
+        if (Math.random() < 0.01) {
+          element.userData.direction.add(
+            new THREE.Vector3(
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2
+            )
+          ).normalize();
+        }
+      });
+      
+      renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Initialize AOS
+    AOS.init({ duration: 1000, once: true });
+
+    // Scroll progress bar
+    window.addEventListener('scroll', () => {
+      const percent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      document.getElementById('progress-bar').style.width = percent + '%';
+    });
+
+    // Play click sound on nav link click
+    const clickSound = document.getElementById('clickSound');
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      });
+    });
+
+    // Simulation Logic
+    let currentStage = 0;
+    const stages = ['stage1', 'stage2', 'stage3'];
+    
+    // Start simulation
+    document.getElementById('start-simulation').addEventListener('click', () => {
+      document.getElementById('alertSound').play();
+      showStage(0);
+      
+      // Create particles on click
+      createParticles(event, 30, '#0ff');
+    });
+    
+    // Next stage buttons
+    document.getElementById('next-stage1').addEventListener('click', () => {
+      showStage(1);
+      createParticles(event, 20, '#f80');
+    });
+    
+    document.getElementById('fake-submit').addEventListener('click', (e) => {
+      e.preventDefault();
+      // Shake form to indicate something's wrong
+      document.querySelector('.fake-login').style.animation = 'shake 0.5s';
+      setTimeout(() => {
+        document.querySelector('.fake-login').style.animation = '';
+        showStage(2);
+        document.getElementById('alertSound').play();
+        createParticles(e, 50, '#f00');
+      }, 500);
+    });
+    
+    // Close buttons
+    document.getElementById('close-stage1').addEventListener('click', () => hideCurrentStage());
+    document.getElementById('close-stage3').addEventListener('click', () => hideCurrentStage());
+    
+    // Learn more button
+    document.getElementById('learn-more').addEventListener('click', () => {
+      window.location.href = 'about.html';
+    });
+    
+    function showStage(index) {
+      // Hide all stages first
+      document.querySelectorAll('.simulation-stage').forEach(stage => {
+        stage.style.display = 'none';
+        document.querySelector(`#${stage.id} .stage-content`).classList.remove('active');
+      });
+      
+      // Show current stage
+      const stage = document.getElementById(stages[index]);
+      stage.style.display = 'flex';
+      setTimeout(() => {
+        document.querySelector(`#${stages[index]} .stage-content`).classList.add('active');
+      }, 10);
+      
+      currentStage = index;
+    }
+    
+    function hideCurrentStage() {
+      const stage = document.getElementById(stages[currentStage]);
+      document.querySelector(`#${stages[currentStage]} .stage-content`).classList.remove('active');
+      setTimeout(() => {
+        stage.style.display = 'none';
+      }, 500);
+    }
+    
+    function createParticles(event, count, color) {
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 5 + 3;
+        const x = event.clientX;
+        const y = event.clientY;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.background = color;
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        
+        document.body.appendChild(particle);
+        
+        const animation = particle.animate([
+          { transform: `translate(0, 0) scale(1)`, opacity: 1 },
+          { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) scale(0)`, opacity: 0 }
+        ], {
+          duration: 1000,
+          easing: 'cubic-bezier(0,0.2,0.8,1)'
+        });
+        
+        animation.onfinish = () => particle.remove();
+      }
+    }
+
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

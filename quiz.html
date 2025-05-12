@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="phishing, quiz, cybersecurity, awareness" />
+  <meta name="description" content="Test your phishing knowledge with our interactive quiz" />
+  <meta name="author" content="Spring Security Team" />
+  <title>Phishing Quiz - Spring Security</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <!-- AOS CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <style>
+    /* Base & Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Poppins', sans-serif; background: #000; color: #fff; }
+    a { color: #ccc; text-decoration: none; transition: color .3s; }
+    a:hover { color: #0ff; }
+
+    /* Progress Bar */
+    #progress-bar { position: fixed; top: 0; left: 0; width: 0; height: 4px; background: #0ff; z-index: 9999; }
+
+    /* Background Canvas */
+    #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+    /* Navbar */
+    .navbar { background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(10px); padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0, 255, 255, 0.3); box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+    .navbar-brand { display: flex; align-items: center; font-size: 1.25rem; }
+    .navbar-brand span { margin-left: 8px; color: #0ff; font-weight: bold; font-size: 1.3rem; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link { color: #ccc !important; position: relative; padding: .5rem 1rem; transition: all 0.3s; font-weight: 500; }
+    .navbar-nav .nav-link::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 0%; height: 2px; background: #0ff; transition: 0.3s ease-out; }
+    .navbar-nav .nav-link:hover { color: #0ff !important; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link:hover::after { width: 80%; }
+    .navbar-nav .nav-link.active { color: #0ff !important; text-shadow: 0 0 8px #0ff; }
+    .navbar-nav .nav-link.active::after { width: 80%; }
+
+    /* Quiz Hero Section */
+    .quiz-hero { height: 50vh; display: flex; align-items: center; justify-content: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://www.kaspersky.com/content/en-global/images/repository/isc/2021/phishing-2.jpg'); background-size: cover; background-position: center; }
+    .quiz-title { font-size: 3.5rem; font-weight: 700; color: #0ff; text-shadow: 0 0 15px rgba(0, 255, 255, 0.5); margin-bottom: 1rem; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    .quiz-subtitle { font-size: 1.5rem; color: #ccc; margin-bottom: 2rem; }
+
+    /* Quiz Container */
+    .quiz-container { max-width: 800px; margin: -50px auto 50px; background: rgba(0,0,0,0.8); border: 2px solid #0ff; border-radius: 15px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); overflow: hidden; position: relative; z-index: 1; }
+    .quiz-header { padding: 20px; background: rgba(0,50,50,0.3); border-bottom: 1px solid #0ff; text-align: center; }
+    .quiz-progress { height: 5px; background: #033; position: relative; }
+    .quiz-progress-bar { height: 100%; background: #0ff; width: 0%; transition: width 0.5s; }
+    .quiz-body { padding: 30px; }
+    .question-text { font-size: 1.3rem; margin-bottom: 25px; color: #0ff; min-height: 80px; display: flex; align-items: center; }
+    .options-container { margin-bottom: 30px; }
+    .option-btn { display: block; width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,30,30,0.5); border: 1px solid #0aa; border-radius: 8px; color: #ccc; text-align: left; transition: all 0.3s; cursor: pointer; }
+    .option-btn:hover { background: rgba(0,100,100,0.3); border-color: #0ff; transform: translateX(10px); }
+    .option-btn.correct { background: rgba(0,100,0,0.5); border-color: #0f0; animation: correct 0.5s; }
+    .option-btn.incorrect { background: rgba(100,0,0,0.5); border-color: #f00; animation: shake 0.5s; }
+    @keyframes correct { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+    .next-btn { display: block; width: 200px; margin: 0 auto; padding: 12px; background: #0aa; border: none; border-radius: 30px; color: #fff; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; }
+    .next-btn:hover { background: #0ff; box-shadow: 0 0 15px rgba(0, 255, 255, 0.5); transform: translateY(-3px); }
+    .next-btn:active { transform: translateY(0); }
+
+    /* Results Section */
+    .results-container { text-align: center; padding: 40px; display: none; }
+    .results-title { font-size: 2.5rem; color: #0ff; margin-bottom: 20px; }
+    .score-text { font-size: 1.5rem; margin-bottom: 30px; }
+    .score-circle { width: 200px; height: 200px; margin: 0 auto 30px; border-radius: 50%; border: 5px solid #0ff; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; position: relative; animation: scorePulse 2s infinite; }
+    @keyframes scorePulse { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(0, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); } }
+    .restart-btn { background: #0aa; border: none; padding: 12px 30px; border-radius: 30px; color: #fff; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+    .restart-btn:hover { background: #0ff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+
+    /* Cyber Elements */
+    .cyber-particle { position: absolute; background: #0ff; border-radius: 50%; pointer-events: none; z-index: -1; }
+
+    /* Add this to your existing CSS */
+.quiz-wrapper {
+  padding: 0 20px;
+  margin: 0 auto;
+  max-width: 1200px;
+  position: relative;
+}
+
+.quiz-container {
+  margin: -50px auto 100px !important; /* Increased bottom margin to 100px */
+  transition: all 0.5s ease;
+}
+
+/* For mobile responsiveness */
+@media (max-width: 768px) {
+  .quiz-container {
+    margin: -30px auto 80px !important;
+    border-radius: 10px;
+  }
+  .quiz-hero {
+    height: 40vh;
+  }
+  .quiz-title {
+    font-size: 2.5rem;
+  }
+}
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <canvas id="bgCanvas"></canvas>
+  <audio id="clickSound" src="sounds/click.mp3" preload="auto"></audio>
+  <audio id="correctSound" src="sounds/correct.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="sounds/wrong.mp3" preload="auto"></audio>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"> <img src="images/logo.png" height="40" alt="logo"><span>Spring Security</span></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="news.html">News</a></li>
+          <li class="nav-item"><a class="nav-link" href="case.html">Cases</a></l>
+          <li class="nav-item"><a class="nav-link active" href="quiz.html">Quiz</a></li>
+          <li class="nav-item"><a class="nav-link" href="org.html">Organization</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="more.html">More</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Quiz Hero -->
+  <section class="quiz-hero">
+    <div class="container">
+      <h1 class="quiz-title" data-aos="fade-down">Phishing Quiz</h1>
+      <p class="quiz-subtitle" data-aos="fade-up" data-aos-delay="200">Test your knowledge and learn to spot phishing attempts</p>
+    </div>
+  </section>
+
+  <!-- Quiz Container -->
+  <div class="quiz-container" data-aos="zoom-in">
+    <div class="quiz-header">
+      <h3>Question <span id="question-number">1</span>/<span id="total-questions">10</span></h3>
+      <div class="quiz-progress">
+        <div class="quiz-progress-bar"></div>
+      </div>
+    </div>
+    <div class="quiz-body">
+      <div class="question-text" id="question-text">Loading question...</div>
+      <div class="options-container" id="options-container">
+          <!-- Options will be inserted here by JavaScript -->
+      </div>
+      <button class="next-btn" id="next-btn">Next Question</button>
+    </div>
+    <div class="results-container" id="results-container">
+      <h2 class="results-title">Quiz Completed!</h2>
+      <div class="score-circle" id="score-circle">
+        <span id="score-text">0%</span>
+      </div>
+      <p class="score-text">You scored <span id="final-score">0</span> out of <span id="max-score">10</span></p>
+      <p id="feedback-text">Keep learning to improve your phishing detection skills!</p>
+      <button class="restart-btn" id="restart-btn">Try Again</button>
+    </div>
+  </div> 
+
+  <!-- Updated Quiz Container Section 
+  <div class="quiz-container" data-aos="zoom-in">
+    <div class="quiz-header">
+      <h3>Question <span id="question-number">1</span>/<span id="total-questions">10</span></h3>
+      <div class="quiz-progress">
+        <div class="quiz-progress-bar"></div>
+      </div>
+    </div>
+    <div class="quiz-body">
+      <div class="question-text" id="question-text">Loading question...</div>
+      <div class="options-container" id="options-container">
+           Options will be inserted here by JavaScript 
+      </div>
+      <button class="next-btn" id="next-btn">Next Question</button>
+    </div>
+    <div class="results-container" id="results-container">
+      <h2 class="results-title">Quiz Completed!</h2>
+      <div class="score-circle" id="score-circle">
+        <span id="score-text">0%</span>
+      </div>
+      <p class="score-text">You scored <span id="final-score">0</span> out of <span id="max-score">10</span></p>
+      <p id="feedback-text">Keep learning to improve your phishing detection skills!</p>
+      <button class="restart-btn" id="restart-btn">Try Again</button>
+    </div>
+  </div> -->
+  
+  <Style>
+      /* Footer */
+    footer {
+      background: #000;
+      color: #aaa;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    </Style>
+
+    <!-- Footer -->
+  <footer data-aos="fade-up">
+    <div class="container">
+      &copy; <span id="year"></span> Spring Security. All rights reserved.
+    </div>
+  </footer>
+  
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>  
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Quiz Questions
+    const questions = [
+      {
+        question: "Which of these is a common sign of a phishing email?",
+        options: [
+          "Generic greeting like 'Dear Customer'",
+          "Urgent request for personal information",
+          "Suspicious email address",
+          "All of the above"
+        ],
+        answer: 3,
+        explanation: "All these are red flags. Phishing emails often use generic greetings, create false urgency, and come from suspicious addresses."
+      },
+      {
+        question: "What should you do if you receive a suspicious email asking for your password?",
+        options: [
+          "Reply with your password",
+          "Forward it to your IT department or email provider",
+          "Click any links to verify if it's legitimate",
+          "Ignore it but don't report it"
+        ],
+        answer: 1,
+        explanation: "Never provide passwords via email. Forward suspicious emails to your IT team or email provider for investigation."
+      },
+      {
+        question: "Which URL is most likely legitimate?",
+        options: [
+          "www.paypa1.com/login",
+          "www.paypal-login.secure.com",
+          "www.paypal.com/account",
+          "www.paypal.securelogin.net"
+        ],
+        answer: 2,
+        explanation: "Only the official PayPal domain (paypal.com) can be trusted. The others use deceptive variations."
+      },
+      {
+        question: "What does HTTPS in a website URL indicate?",
+        options: [
+          "The site is completely safe from phishing",
+          "The connection is encrypted",
+          "The site is government-approved",
+          "The site has no malware"
+        ],
+        answer: 1,
+        explanation: "HTTPS only means the connection is encrypted, not that the site is trustworthy. Phishing sites can also use HTTPS."
+      },
+      {
+        question: "Which attachment type is most dangerous to open from an unknown sender?",
+        options: [
+          ".txt file",
+          ".pdf file",
+          ".exe file",
+          ".jpg file"
+        ],
+        answer: 2,
+        explanation: ".exe files can install malware. Even PDFs and images can be dangerous, but executables are highest risk."
+      },
+      {
+        question: "What is 'spear phishing'?",
+        options: [
+          "Phishing using fishing metaphors",
+          "Targeted phishing against specific individuals",
+          "Phishing via phone calls",
+          "Phishing that uses celebrity endorsements"
+        ],
+        answer: 1,
+        explanation: "Spear phishing is highly targeted, using personal information to appear more legitimate."
+      },
+      {
+        question: "Which of these is NOT a recommended way to protect against phishing?",
+        options: [
+          "Enable two-factor authentication",
+          "Use the same password for multiple accounts",
+          "Hover over links before clicking",
+          "Keep software updated"
+        ],
+        answer: 1,
+        explanation: "Using unique passwords for each account is essential. Password reuse makes multiple accounts vulnerable if one is compromised."
+      },
+      {
+        question: "What should you do if you accidentally entered credentials on a phishing site?",
+        options: [
+          "Change your password immediately",
+          "Enable two-factor authentication",
+          "Check for suspicious activity",
+          "All of the above"
+        ],
+        answer: 3,
+        explanation: "All these steps are important to mitigate damage from compromised credentials."
+      },
+      {
+        question: "Which social engineering tactic do phishers commonly use?",
+        options: [
+          "Creating a sense of urgency",
+          "Pretending to be authority figures",
+          "Offering too-good-to-be-true deals",
+          "All of the above"
+        ],
+        answer: 3,
+        explanation: "Phishers use all these psychological tactics to manipulate victims into acting without thinking."
+      },
+      {
+        question: "What is 'vishing'?",
+        options: [
+          "Phishing via voice calls",
+          "Phishing using visual elements",
+          "Phishing targeting VIPs",
+          "Phishing through video messages"
+        ],
+        answer: 0,
+        explanation: "Vishing is voice phishing, where scammers call pretending to be from legitimate organizations."
+      }
+    ];
+
+    // Quiz Variables
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOption = null;
+    let quizCompleted = false;
+
+    // DOM Elements
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const nextBtn = document.getElementById('next-btn');
+    const questionNumber = document.getElementById('question-number');
+    const totalQuestions = document.getElementById('total-questions');
+    const progressBar = document.querySelector('.quiz-progress-bar');
+    const resultsContainer = document.getElementById('results-container');
+    const quizBody = document.querySelector('.quiz-body');
+    const scoreText = document.getElementById('score-text');
+    const finalScore = document.getElementById('final-score');
+    const maxScore = document.getElementById('max-score');
+    const feedbackText = document.getElementById('feedback-text');
+    const restartBtn = document.getElementById('restart-btn');
+    const scoreCircle = document.getElementById('score-circle');
+
+    // Initialize Quiz
+    function initQuiz() {
+      totalQuestions.textContent = questions.length;
+      loadQuestion();
+    }
+
+    // Load Question
+    function loadQuestion() {
+      resetState();
+      const question = questions[currentQuestion];
+      questionText.textContent = question.question;
+      questionNumber.textContent = currentQuestion + 1;
+      
+      // Update progress bar
+      progressBar.style.width = `${((currentQuestion) / questions.length) * 100}%`;
+      
+      // Create options
+      question.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.classList.add('option-btn');
+        button.textContent = option;
+        button.dataset.index = index;
+        optionsContainer.appendChild(button);
+        
+        button.addEventListener('click', selectOption);
+      });
+      
+      // Hide next button initially
+      nextBtn.style.display = 'none';
+    }
+
+    // Reset State
+    function resetState() {
+      while (optionsContainer.firstChild) {
+        optionsContainer.removeChild(optionsContainer.firstChild);
+      }
+      selectedOption = null;
+    }
+
+    // Select Option
+    function selectOption(e) {
+      if (quizCompleted) return;
+      
+      const selectedButton = e.target;
+      const correctIndex = questions[currentQuestion].answer;
+      const selectedIndex = parseInt(selectedButton.dataset.index);
+      
+      // Disable all options
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.disabled = true;
+      });
+      
+      // Mark correct/incorrect
+      if (selectedIndex === correctIndex) {
+        selectedButton.classList.add('correct');
+        score++;
+        document.getElementById('correctSound').play();
+        createParticles(selectedButton, true);
+      } else {
+        selectedButton.classList.add('incorrect');
+        document.querySelector(`.option-btn[data-index="${correctIndex}"]`).classList.add('correct');
+        document.getElementById('wrongSound').play();
+        createParticles(selectedButton, false);
+      }
+      
+      // Show next button
+      nextBtn.style.display = 'block';
+    }
+
+    // Next Question
+    nextBtn.addEventListener('click', () => {
+      if (quizCompleted) {
+        showResults();
+        return;
+      }
+      
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        quizCompleted = true;
+        nextBtn.textContent = 'Show Results';
+      }
+    });
+
+    // Show Results
+    function showResults() {
+      quizBody.style.display = 'none';
+      resultsContainer.style.display = 'block';
+      
+      const percentage = Math.round((score / questions.length) * 100);
+      scoreText.textContent = `${percentage}%`;
+      finalScore.textContent = score;
+      maxScore.textContent = questions.length;
+      
+      // Set feedback based on score
+      if (percentage >= 80) {
+        feedbackText.textContent = "Excellent! You're a phishing detection expert!";
+        scoreCircle.style.borderColor = "#0f0";
+      } else if (percentage >= 50) {
+        feedbackText.textContent = "Good job! You know quite a bit about phishing.";
+        scoreCircle.style.borderColor = "#0ff";
+      } else {
+        feedbackText.textContent = "Keep learning! Review our resources to improve your phishing detection skills.";
+        scoreCircle.style.borderColor = "#f80";
+      }
+      
+      // Animate score counting
+      let count = 0;
+      const interval = setInterval(() => {
+        if (count >= percentage) {
+          clearInterval(interval);
+        } else {
+          count++;
+          scoreText.textContent = `${count}%`;
+        }
+      }, 20);
+    }
+
+    // Restart Quiz
+    restartBtn.addEventListener('click', () => {
+      currentQuestion = 0;
+      score = 0;
+      quizCompleted = false;
+      quizBody.style.display = 'block';
+      resultsContainer.style.display = 'none';
+      nextBtn.textContent = 'Next Question';
+      loadQuestion();
+    });
+
+    // Create Particles
+    function createParticles(element, isCorrect) {
+      const rect = element.getBoundingClientRect();
+      const colors = isCorrect ? ['#0f0', '#0ff', '#0a0'] : ['#f00', '#f80', '#f44'];
+      
+      for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('cyber-particle');
+        
+        const size = Math.random() * 5 + 3;
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        
+        document.body.appendChild(particle);
+        
+        const animation = particle.animate([
+          { transform: `translate(0, 0) scale(1)`, opacity: 1 },
+          { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) scale(0)`, opacity: 0 }
+        ], {
+          duration: 1000,
+          easing: 'cubic-bezier(0,0.2,0.8,1)'
+        });
+        
+        animation.onfinish = () => particle.remove();
+      }
+    }
+
+    // Three.js Background
+    const canvas = document.getElementById('bgCanvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); 
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene(); 
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); 
+    camera.position.z = 5;
+    
+    // Create cyber grid
+    const gridGeometry = new THREE.BufferGeometry();
+    const gridMaterial = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.1 });
+    const gridSize = 20;
+    const gridDivisions = 20;
+    const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x00ffff, 0x00ffff);
+    gridHelper.material.opacity = 0.1;
+    gridHelper.material.transparent = true;
+    scene.add(gridHelper);
+    
+    // Create floating cyber elements
+    const cyberElements = [];
+    const elementGeometry = new THREE.TetrahedronGeometry(0.1, 0);
+    const elementMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
+    
+    for (let i = 0; i < 50; i++) {
+      const element = new THREE.Mesh(elementGeometry, elementMaterial);
+      element.position.x = (Math.random() - 0.5) * 10;
+      element.position.y = (Math.random() - 0.5) * 10;
+      element.position.z = (Math.random() - 0.5) * 10;
+      element.userData = {
+        speed: Math.random() * 0.02 + 0.01,
+        direction: new THREE.Vector3(
+          Math.random() - 0.5,
+          Math.random() - 0.5,
+          Math.random() - 0.5
+        ).normalize()
+      };
+      scene.add(element);
+      cyberElements.push(element);
+    }
+    
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      // Rotate grid
+      gridHelper.rotation.x += 0.001;
+      gridHelper.rotation.y += 0.002;
+      
+      // Move cyber elements
+      cyberElements.forEach(element => {
+        element.position.addScaledVector(element.userData.direction, element.userData.speed);
+        
+        // Bounce off imaginary walls
+        if (Math.abs(element.position.x) > 5) element.userData.direction.x *= -1;
+        if (Math.abs(element.position.y) > 5) element.userData.direction.y *= -1;
+        if (Math.abs(element.position.z) > 5) element.userData.direction.z *= -1;
+        
+        // Random direction changes
+        if (Math.random() < 0.01) {
+          element.userData.direction.add(
+            new THREE.Vector3(
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2
+            )
+          ).normalize();
+        }
+      });
+      
+      renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Initialize AOS
+    AOS.init({ duration: 1000, once: true });
+
+    // Scroll progress bar
+    window.addEventListener('scroll', () => {
+      const percent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      document.getElementById('progress-bar').style.width = percent + '%';
+    });
+
+    // Play click sound on nav link click
+    const clickSound = document.getElementById('clickSound');
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      });
+    });
+
+    // Start the quiz
+    initQuiz();
+  </script>
+</body>
+</html>
