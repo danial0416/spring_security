@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="phishing, cybersecurity, awareness" />
+  <meta name="description" content="About Phishing - Spring Anti-Phishing Awareness Platform" />
+  <meta name="author" content="Spring Security Team" />
+  <title>About Phishing - Spring Security</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <!-- AOS CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <style>
+    /* Base & Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Poppins', sans-serif; background: #000; color: #fff; }
+    a { color: #ccc; text-decoration: none; transition: color .3s; }
+    a:hover { color: #0ff; }
+
+    /* Progress Bar */
+    #progress-bar { position: fixed; top: 0; left: 0; width: 0; height: 4px; background: #0ff; z-index: 9999; }
+
+    /* Background Canvas */
+    #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+    /* Navbar */
+    .navbar { background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(10px); padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0, 255, 255, 0.3); box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+    .navbar-brand { display: flex; align-items: center; font-size: 1.25rem; }
+    .navbar-brand span { margin-left: 8px; color: #0ff; font-weight: bold; font-size: 1.3rem; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link { color: #ccc !important; position: relative; padding: .5rem 1rem; transition: all 0.3s; font-weight: 500; }
+    .navbar-nav .nav-link::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 0%; height: 2px; background: #0ff; transition: 0.3s ease-out; }
+    .navbar-nav .nav-link:hover { color: #0ff !important; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link:hover::after { width: 80%; }
+    .navbar-nav .nav-link.active { color: #0ff !important; text-shadow: 0 0 8px #0ff; }
+    .navbar-nav .nav-link.active::after { width: 80%; }
+
+    /* Hero Section */
+    .hero-about { height: 60vh; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://www.kaspersky.com/content/en-global/images/repository/isc/2021/phishing-2.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; }
+    .hero-content { max-width: 800px; margin: 0 auto; text-align: center; }
+    .hero-title { font-size: 3.5rem; font-weight: 700; color: #0ff; text-shadow: 0 0 15px rgba(0, 255, 255, 0.5); margin-bottom: 1rem; }
+    .hero-subtitle { font-size: 1.5rem; color: #ccc; margin-bottom: 2rem; }
+
+    /* Sections */
+    section { padding: 80px 0; }
+    .section-light { background: #040404; }
+    .section-dark { background: #111; }
+    .section-title { text-align: center; margin-bottom: 50px; color: #0ff; font-weight: 700; font-size: 2.5rem; text-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+    .section-subtitle { color: #0ff; font-weight: 600; margin-bottom: 20px; font-size: 1.5rem; }
+
+    /* Cards & Boxes */
+    .card, .box { background: rgba(0,0,0,0.6); border: 1px solid #0ff; border-radius: 8px; color: #ddd; transition: transform .3s, box-shadow .3s; }
+    .card:hover, .box:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0,255,255,0.2); }
+
+    /* Timeline */
+    .timeline { position: relative; max-width: 1200px; margin: 0 auto; }
+    .timeline::after { content: ''; position: absolute; width: 6px; background-color: #0ff; top: 0; bottom: 0; left: 50%; margin-left: -3px; }
+    .timeline-container { padding: 10px 40px; position: relative; background-color: inherit; width: 50%; }
+    .timeline-container::after { content: ''; position: absolute; width: 25px; height: 25px; right: -17px; background-color: #000; border: 4px solid #0ff; top: 15px; border-radius: 50%; z-index: 1; }
+    .left { left: 0; }
+    .right { left: 50%; }
+    .left::before { content: " "; height: 0; position: absolute; top: 22px; width: 0; z-index: 1; right: 30px; border: medium solid #0ff; border-width: 10px 0 10px 10px; border-color: transparent transparent transparent #0ff; }
+    .right::before { content: " "; height: 0; position: absolute; top: 22px; width: 0; z-index: 1; left: 30px; border: medium solid #0ff; border-width: 10px 10px 10px 0; border-color: transparent #0ff transparent transparent; }
+    .right::after { left: -16px; }
+    .timeline-content { padding: 20px 30px; background-color: rgba(0,0,0,0.5); border: 1px solid #0ff; border-radius: 6px; }
+    .timeline-date { color: #0ff; font-weight: 600; }
+
+    /* Stats */
+    .stat-item { text-align: center; padding: 30px; }
+    .stat-number { font-size: 3rem; font-weight: 700; color: #0ff; margin-bottom: 10px; }
+    .stat-label { font-size: 1.2rem; color: #ccc; }
+
+    /* Footer */
+    footer { background: #000; color: #aaa; text-align: center; padding: 30px 0; border-top: 1px solid rgba(0, 255, 255, 0.2); }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <canvas id="bgCanvas"></canvas>
+  <audio id="clickSound" src="sounds/click.mp3" preload="auto"></audio>
+
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="index.html"> <img src="images/logo.png" height="40" alt="logo"><span>Spring Security</span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="news.html">News</a></li>
+        <li class="nav-item"><a class="nav-link" href="case.html">Cases</a></l>
+        <li class="nav-item"><a class="nav-link" href="quiz.html">Quiz</a></li>
+        <li class="nav-item"><a class="nav-link" href="org.html">Organization</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="more.html">More</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  <!-- Hero Section -->
+  <section class="hero-about">
+    <div class="container hero-content" data-aos="fade-up">
+      <h1 class="hero-title">Understanding Phishing</h1>
+      <p class="hero-subtitle">Learn how cybercriminals trick users and how to protect yourself</p>
+    </div>
+  </section>
+
+  <!-- What is Phishing Section -->
+  <section class="section-light">
+    <div class="container">
+      <h2 class="section-title">What is Phishing?</h2>
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4" data-aos="fade-right">
+          <img src="https://www.malwarebytes.com/wp-content/uploads/sites/2/2024/05/phishing.webp?w=1024" alt="Phishing Attack" class="img-fluid rounded border border-cyan">
+        </div>
+        <div class="col-lg-6" data-aos="fade-left">
+          <h3 class="section-subtitle">The Digital Deception</h3>
+          <p>Phishing is a serious cybercrime where attackers impersonate trusted organizations like banks, government agencies, or delivery services. For example, via email, SMS, or calls to trick people into revealing personal info such as IC numbers, bank logins, or passwords.</p>
+          <p>In Malaysia, common phishing scams include fake LHDN tax refunds, JPJ summons, and delivery messages from Pos Laju or DHL. Victims are redirected to fake websites that mimic official ones to steal their data.</p>
+          <p>This stolen info is then used for fraud, unauthorized fund transfers, or identity theft. The word "phishing" comes from "fishing," as scammers bait victims into giving up sensitive details.</p>
+          <div class="mt-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-exclamation-triangle text-warning mr-3 fa-2x"></i>
+              <span>According to CyberSecurity Malaysia, phishing ranked among the top 3 reported incidents in recent years.</span>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-envelope text-danger mr-3 fa-2x"></i>
+              <span>Over 5,000 phishing websites targeting Malaysians were taken down in 2023 alone.</span>
+            </div>
+            <div class="d-flex align-items-center">
+              <i class="fas fa-dollar-sign text-success mr-3 fa-2x"></i>
+              <span>The Royal Malaysia Police (PDRM) reported millions lost in parcel scam phishing cases, especially via SMS and messaging apps like WhatsApp.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How Phishing Works Section -->
+  <section class="section-dark">
+    <div class="container">
+      <h2 class="section-title">How Phishing Works</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4" data-aos="zoom-in">
+          <div class="card h-100 p-4">
+            <div class="text-center mb-3">
+              <i class="fas fa-fish fa-3x text-cyan"></i>
+            </div>
+            <h4 class="text-center mb-3">1. The Bait</h4>
+            <p>Attackers create fake emails, messages, or websites that look legitimate. These often imitate banks, social media platforms, or popular services to gain your trust.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="100">
+          <div class="card h-100 p-4">
+            <div class="text-center mb-3">
+              <i class="fas fa-hook fa-3x text-cyan"></i>
+            </div>
+            <h4 class="text-center mb-3">2. The Hook</h4>
+            <p>The message creates urgency or fear ("Your account will be closed!") prompting immediate action. Links lead to fake login pages where victims enter credentials.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="200">
+          <div class="card h-100 p-4">
+            <div class="text-center mb-3">
+              <i class="fas fa-lock-open fa-3x text-cyan"></i>
+            </div>
+            <h4 class="text-center mb-3">3. The Catch</h4>
+            <p>With your information, attackers access real accounts, steal money, or sell data. Malware may also be installed for long-term access to your device.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- History of Phishing Section -->
+  <section class="section-light">
+    <div class="container">
+      <h2 class="section-title">History of Phishing</h2>
+      <p class="text-center mb-5">Phishing has evolved significantly since its inception. Here's a timeline of major developments:</p>
+      
+      <div class="timeline">
+        <div class="timeline-container left" data-aos="fade-right">
+          <div class="timeline-content">
+            <h3 class="timeline-date">1990s</h3>
+            <p>The term "phishing" first appeared in 1996 targeting AOL users. Hackers would pose as AOL staff to steal passwords.</p>
+          </div>
+        </div>
+        <div class="timeline-container right" data-aos="fade-left">
+          <div class="timeline-content">
+            <h3 class="timeline-date">Early 2000s</h3>
+            <p>Phishing expanded to target online payment systems like eBay and PayPal as e-commerce grew in popularity.</p>
+          </div>
+        </div>
+        <div class="timeline-container left" data-aos="fade-right">
+          <div class="timeline-content">
+            <h3 class="timeline-date">2003</h3>
+            <p>The first known phishing attack against a bank targeted customers of a Brazilian bank with emails containing malicious attachments.</p>
+          </div>
+        </div>
+        <div class="timeline-container right" data-aos="fade-left">
+          <div class="timeline-content">
+            <h3 class="timeline-date">2005-2010</h3>
+            <p>Spear phishing emerged, targeting specific individuals or organizations with personalized messages for higher success rates.</p>
+          </div>
+        </div>
+        <div class="timeline-container left" data-aos="fade-right">
+          <div class="timeline-content">
+            <h3 class="timeline-date">2013</h3>
+            <p>Phishing kits became available on dark web marketplaces, making it easier for less technical criminals to launch attacks.</p>
+          </div>
+        </div>
+        <div class="timeline-container right" data-aos="fade-left">
+          <div class="timeline-content">
+            <h3 class="timeline-date">2016-2020</h3>
+            <p>Business Email Compromise (BEC) scams cost organizations over $26 billion. Social media phishing grew exponentially.</p>
+          </div>
+        </div>
+        <div class="timeline-container left" data-aos="fade-right">
+          <div class="timeline-content">
+            <h3 class="timeline-date">2021-Present</h3>
+            <p>AI-powered phishing uses machine learning to craft highly personalized messages. Cloud service phishing and SMS phishing (smishing) surge.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Phishing Statistics Section -->
+  <section class="section-dark">
+    <div class="container">
+      <h2 class="section-title">Phishing by the Numbers</h2>
+      <div class="row">
+        <div class="col-md-3 col-6 mb-4" data-aos="fade-up">
+          <div class="stat-item">
+            <div class="stat-number">76%</div>
+            <div class="stat-label">of organizations experienced phishing attacks in 2024</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="stat-item">
+            <div class="stat-number">1.2M</div>
+            <div class="stat-label">unique phishing websites detected monthly</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="stat-item">
+            <div class="stat-number">36%</div>
+            <div class="stat-label">of data breaches involve phishing</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="stat-item">
+            <div class="stat-number">$4.35M</div>
+            <div class="stat-label">average cost of phishing attacks to businesses</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Common Targets Section -->
+  <section class="section-light">
+    <div class="container">
+      <h2 class="section-title">Common Phishing Targets</h2>
+      <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4" data-aos="flip-left">
+          <div class="card h-100 p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-university fa-2x text-cyan mr-3"></i>
+              <h4 class="mb-0">Financial Institutions</h4>
+            </div>
+            <p>Banks, credit unions, and payment processors are prime targets. Attackers impersonate these to steal login credentials and financial information.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4" data-aos="flip-left" data-aos-delay="100">
+          <div class="card h-100 p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-shopping-cart fa-2x text-cyan mr-3"></i>
+              <h4 class="mb-0">E-commerce Sites</h4>
+            </div>
+            <p>Shopee, Amazon, eBay, and other retailers are frequently spoofed with fake order confirmations or account verification requests.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4" data-aos="flip-left" data-aos-delay="200">
+          <div class="card h-100 p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-envelope fa-2x text-cyan mr-3"></i>
+              <h4 class="mb-0">Email Providers</h4>
+            </div>
+            <p>Gmail, Outlook, and Yahoo accounts are valuable targets as they provide access to password reset links for other services.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4" data-aos="flip-left" data-aos-delay="300">
+          <div class="card h-100 p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-cloud fa-2x text-cyan mr-3"></i>
+              <h4 class="mb-0">Cloud Services</h4>
+            </div>
+            <p>Microsoft 365, Google Workspace, and Dropbox are targeted for business data and as gateways to corporate networks.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4" data-aos="flip-left" data-aos-delay="400">
+          <div class="card h-100 p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-mobile-alt fa-2x text-cyan mr-3"></i>
+              <h4 class="mb-0">Social Media</h4>
+            </div>
+            <p>Facebook, Instagram, and LinkedIn accounts are hijacked for spreading scams or accessing connected services.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4" data-aos="flip-left" data-aos-delay="500">
+          <div class="card h-100 p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-wifi fa-2x text-cyan mr-3"></i>
+              <h4 class="mb-0">Telecom Providers</h4>
+            </div>
+            <p>Scammers impersonate phone and internet providers to steal account info or install malware on devices.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer data-aos="fade-up">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <h5 class="text-cyan mb-3">Spring Security</h5>
+          <p>Empowering users with knowledge to combat phishing threats through education and awareness.</p>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h5 class="text-cyan mb-3">Quick Links</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="index.html">Home</a></li>
+            <li class="mb-2"><a href="about.html">About Phishing</a></li>
+            <li class="mb-2"><a href="quiz.html">Take the Quiz</a></li>
+            <li class="mb-2"><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h5 class="text-cyan mb-3">Stay Protected</h5>
+          <p>Subscribe to our newsletter for the latest phishing alerts and protection tips.</p>
+          <div class="input-group">
+            <input type="email" class="form-control bg-dark border-cyan" placeholder="Your email">
+            <div class="input-group-append">
+              <button class="btn btn-cyan" type="button">Subscribe</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="border-cyan my-4">
+      <div class="text-center">
+        &copy; <span id="year"></span> Spring Security. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(link=>{
+      link.addEventListener('click',e=>{
+        e.preventDefault(); document.querySelector(link.getAttribute('href')).scrollIntoView({ behavior:'smooth' });
+      });
+    });
+
+    // AOS init
+    AOS.init({ duration:1000, once:true });
+
+    // Scroll progress bar
+    window.addEventListener('scroll', ()=>{
+      const percent = (window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+      document.getElementById('progress-bar').style.width = percent + '%';
+    });
+
+    // Three.js background
+    const canvas = document.getElementById('bgCanvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true }); renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000); camera.position.z=5;
+    const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(2,0.5,100,16), new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, opacity:0.2, transparent:true }));
+    scene.add(knot);
+    function animate(){ requestAnimationFrame(animate); knot.rotation.x+=0.005; knot.rotation.y+=0.01; renderer.render(scene,camera); } animate();
+    window.addEventListener('resize',()=>{ renderer.setSize(window.innerWidth,window.innerHeight); camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); });
+
+    // Play click sound on nav link click
+    const clickSound = document.getElementById('clickSound');
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      });
+    });
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="phishing, cybersecurity, news, alerts" />
+  <meta name="description" content="Latest phishing news and security alerts" />
+  <meta name="author" content="Spring Security Team" />
+  <title>Security News - Spring Security</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <!-- AOS CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <style>
+    /* Base & Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Poppins', sans-serif; background: #000; color: #fff; }
+    a { color: #ccc; text-decoration: none; transition: color .3s; }
+    a:hover { color: #0ff; }
+
+    /* Progress Bar */
+    #progress-bar { position: fixed; top: 0; left: 0; width: 0; height: 4px; background: #0ff; z-index: 9999; }
+
+    /* Background Canvas */
+    #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+    /* Navbar */
+    .navbar { background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(10px); padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0, 255, 255, 0.3); box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+    .navbar-brand { display: flex; align-items: center; font-size: 1.25rem; }
+    .navbar-brand span { margin-left: 8px; color: #0ff; font-weight: bold; font-size: 1.3rem; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link { color: #ccc !important; position: relative; padding: .5rem 1rem; transition: all 0.3s; font-weight: 500; }
+    .navbar-nav .nav-link::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 0%; height: 2px; background: #0ff; transition: 0.3s ease-out; }
+    .navbar-nav .nav-link:hover { color: #0ff !important; text-shadow: 0 0 10px #0ff; }
+    .navbar-nav .nav-link:hover::after { width: 80%; }
+    .navbar-nav .nav-link.active { color: #0ff !important; text-shadow: 0 0 8px #0ff; }
+    .navbar-nav .nav-link.active::after { width: 80%; }
+
+    /* News Hero */
+    .news-hero { height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+    .news-hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.3)); z-index: 1; }
+    .news-hero video { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); min-width: 100%; min-height: 100%; z-index: 0; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; padding: 0 20px; }
+    .news-title { font-size: 4rem; font-weight: 700; color: #0ff; text-shadow: 0 0 20px rgba(0, 255, 255, 0.7); margin-bottom: 1rem; animation: pulse 3s infinite; }
+    .news-subtitle { font-size: 1.5rem; color: #fff; margin-bottom: 2rem; }
+    .scroll-prompt { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: #0ff; font-size: 1.2rem; animation: bounce 2s infinite; }
+    @keyframes pulse { 0% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.7); } 50% { text-shadow: 0 0 30px rgba(0, 255, 255, 1); } 100% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.7); } }
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-20px) translateX(-50%); } 60% { transform: translateY(-10px) translateX(-50%); } }
+
+    /* News Grid */
+    .news-container { padding: 80px 0 40px; }
+    .section-title { text-align: center; margin-bottom: 50px; color: #0ff; font-weight: 700; font-size: 2.5rem; text-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; margin: 0 auto; max-width: 1200px; padding: 0 20px; }
+
+    /* News Card */
+    .news-card { background: rgba(0, 10, 15, 0.7); border: 1px solid #0aa; border-radius: 10px; overflow: hidden; transition: all 0.5s ease; position: relative; }
+    .news-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0, 255, 255, 0.2); border-color: #0ff; }
+    .news-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, transparent 100%); opacity: 0; transition: opacity 0.3s; }
+    .news-card:hover::before { opacity: 1; }
+    .news-img-container { height: 200px; overflow: hidden; position: relative; }
+    .news-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .news-card:hover .news-img { transform: scale(1.1); }
+    .news-badge { position: absolute; top: 15px; right: 15px; background: rgba(0, 0, 0, 0.7); color: #0ff; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; border: 1px solid #0ff; }
+    .news-content { padding: 20px; }
+    .news-date { color: #0ff; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; }
+    .news-date i { margin-right: 8px; }
+    .news-headline { font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; color: #fff; line-height: 1.4; }
+    .news-excerpt { color: #ccc; margin-bottom: 20px; line-height: 1.6; }
+    .read-more { display: inline-block; color: #0ff; font-weight: 500; position: relative; }
+    .read-more::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0%; height: 2px; background: #0ff; transition: width 0.3s; }
+    .read-more:hover::after { width: 100%; }
+
+    /* Featured Article */
+    .featured-article { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; background: rgba(0, 20, 30, 0.7); border: 1px solid #0ff; border-radius: 10px; overflow: hidden; margin-bottom: 50px; }
+    .featured-img { height: 100%; min-height: 400px; }
+    .featured-content { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+    .featured-badge { display: inline-block; background: #0ff; color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 15px; align-self: flex-start; }
+    .featured-title { font-size: 2rem; font-weight: 700; margin-bottom: 20px; color: #fff; line-height: 1.3; }
+    .featured-excerpt { font-size: 1.1rem; line-height: 1.7; margin-bottom: 30px; color: #ccc; }
+    .featured-meta { display: flex; align-items: center; margin-bottom: 30px; }
+    .featured-date { color: #0ff; margin-right: 20px; }
+    .featured-author { color: #aaa; }
+
+    /* News Modal */
+    .news-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000; display: none; overflow-y: auto; }
+    .modal-content { background: #000; max-width: 900px; margin: 50px auto; border: 1px solid #0ff; border-radius: 10px; overflow: hidden; position: relative; }
+    .modal-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 1.5rem; cursor: pointer; z-index: 1; transition: color 0.3s; }
+    .modal-close:hover { color: #0ff; }
+    .modal-img { width: 100%; height: 400px; object-fit: cover; }
+    .modal-body { padding: 40px; }
+    .modal-date { color: #0ff; margin-bottom: 15px; }
+    .modal-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 20px; color: #fff; line-height: 1.3; }
+    .modal-text { line-height: 1.8; margin-bottom: 30px; color: #ccc; }
+    .modal-text p { margin-bottom: 20px; }
+    .modal-tags { display: flex; flex-wrap: wrap; margin-bottom: 30px; }
+    .modal-tag { background: rgba(0, 100, 100, 0.3); color: #0ff; padding: 5px 15px; border-radius: 20px; margin-right: 10px; margin-bottom: 10px; font-size: 0.9rem; }
+
+    /* Newsletter */
+    .newsletter { background: linear-gradient(to right, rgba(0, 30, 40, 0.8), rgba(0, 10, 20, 0.9)); border-top: 1px solid #0ff; border-bottom: 1px solid #0ff; padding: 60px 0; margin: 50px 0; }
+    .newsletter-container { max-width: 800px; margin: 0 auto; text-align: center; padding: 0 20px; }
+    .newsletter-title { font-size: 2rem; color: #0ff; margin-bottom: 20px; }
+    .newsletter-desc { color: #ccc; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+    .newsletter-form { display: flex; max-width: 500px; margin: 0 auto; }
+    .newsletter-input { flex: 1; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 1px solid #0aa; color: #fff; border-radius: 30px 0 0 30px; }
+    .newsletter-input:focus { outline: none; border-color: #0ff; }
+    .newsletter-btn { padding: 15px 25px; background: #0aa; color: #fff; border: none; border-radius: 0 30px 30px 0; cursor: pointer; transition: all 0.3s; }
+    .newsletter-btn:hover { background: #0ff; }
+
+    /* Footer */
+    footer { background: #000; color: #aaa; text-align: center; padding: 30px 0; border-top: 1px solid rgba(0, 255, 255, 0.2); }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <canvas id="bgCanvas"></canvas>
+  <audio id="clickSound" src="sounds/click.mp3" preload="auto"></audio>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"> <img src="images/logo.png" height="40" alt="logo"><span>Spring Security</span></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link active" href="news.html">News</a></li>
+          <li class="nav-item"><a class="nav-link" href="case.html">Cases</a></l>
+          <li class="nav-item"><a class="nav-link" href="quiz.html">Quiz</a></li>
+          <li class="nav-item"><a class="nav-link" href="org.html">Organization</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="more.html">More</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- News Hero -->
+  <section class="news-hero">
+    <video autoplay muted loop>
+      <source src="videos/cyber_bg.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content" data-aos="fade-up">
+      <h1 class="news-title">Security News</h1>
+      <p class="news-subtitle">Stay updated with the latest phishing threats and cybersecurity trends</p>
+    </div>
+    <div class="scroll-prompt">Scroll to Explore</div>
+  </section>
+
+  <!-- News Container -->
+  <div class="news-container">
+    <h2 class="section-title" data-aos="fade-up">Latest Alerts</h2>
+    
+    <div class="news-grid">
+      <!-- Featured Article -->
+      <article class="featured-article" data-aos="fade-up">
+        <div class="featured-img">
+          <img src="images\new-phishing-kit.jpg" alt="Phishing Attack" class="news-img">
+        </div>
+        <div class="featured-content">
+          <span class="featured-badge">FEATURED</span>
+          <h3 class="featured-title">New Phishing Kit Bypasses Two-Factor Protections</h3>
+          <p class="featured-excerpt">A new phishing kit bypasses two-factor authentication through session hijacking and real-time credential interception from services like Gmail, Yahoo, AOL and Microsoft 365.</p>
+          <div class="featured-meta">
+            <span class="featured-date"><i class="far fa-calendar-alt"></i> February 13, 2025</span>
+            <span class="featured-author"><i class="far fa-user"></i> By Prajeet Nair</span>
+          </div>
+          <a href="#" class="read-more read-featured" data-article="1">Read Full Report →</a>
+        </div>
+      </article>
+
+      <!-- News Cards -->
+      <article class="news-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="news-img-container">
+          <img src="https://media2.malaymail.com/uploads/articles/2020/2020-07/pc_scam_syndicate_160720a.jpg" alt="Recent Phishing Trend" class="news-img">
+          <span class="news-badge">TRENDING</span>
+        </div>
+        <div class="news-content">
+          <div class="news-date"><i class="far fa-clock"></i> May 12, 2025</div>
+          <h3 class="news-headline">Social Media Phishing Attacks Increase by 300% in Q1 2025</h3>
+          <p class="news-excerpt">Cybercriminals are exploiting new features on popular platforms to trick users into revealing login credentials through fake verification processes.</p>
+          <a href="#" class="read-more" data-article="2">Continue Reading</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="news-img-container">
+          <img src="https://cdn4.premiumread.com/?url=https://malaymail.com/malaymail/uploads/images/2025/03/03/263853.JPG&w=1000&q=100&f=jpg&t=6" alt="Email Scam" class="news-img">
+          <span class="news-badge">WARNING</span>
+        </div>
+        <div class="news-content">
+          <div class="news-date"><i class="far fa-clock"></i> May 8, 2025</div>
+          <h3 class="news-headline">Fake Invoice Scams Cost Businesses $2.3 Million Last Month</h3>
+          <p class="news-excerpt">A new wave of PDF invoice attachments contains hidden malware that compromises entire networks when opened. Learn how to identify these threats.</p>
+          <a href="#" class="read-more" data-article="3">Continue Reading</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="news-img-container">
+          <img src="https://themalaysianreserve.com/wp-content/uploads/2025/01/MHO-SCAM013.jpeg" alt="Statistics" class="news-img">
+          <span class="news-badge">ANALYSIS</span>
+        </div>
+        <div class="news-content">
+          <div class="news-date"><i class="far fa-clock"></i> May 5, 2025</div>
+          <h3 class="news-headline">2025 Phishing Statistics Reveal Alarming New Trends</h3>
+          <p class="news-excerpt">Our annual report shows how phishing tactics have evolved to exploit remote work vulnerabilities and cryptocurrency hype.</p>
+          <a href="#" class="read-more" data-article="4">Continue Reading</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-aos="fade-up" data-aos-delay="400">
+        <div class="news-img-container">
+          <img src="https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2024/02/38.png" alt="Security" class="news-img">
+          <span class="news-badge">GUIDE</span>
+        </div>
+        <div class="news-content">
+          <div class="news-date"><i class="far fa-clock"></i> May 1, 2025</div>
+          <h3 class="news-headline">How to Train Employees to Recognize Sophisticated Phishing Attempts</h3>
+          <p class="news-excerpt">Interactive training methods that reduce click-through rates by up to 85%. Real-world examples from successful corporate programs.</p>
+          <a href="#" class="read-more" data-article="5">Continue Reading</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-aos="fade-up" data-aos-delay="500">
+        <div class="news-img-container">
+          <img src="https://www.ownyouronline.govt.nz/assets/Uploads/HeaderImage/Bank-Your-account-is-being-checked-for-suspected-fraudulent-funds-your-account-will-be-frozen-immediately-please-click-the-link-below-to-complete-the-verification-httpswww__FocusFillWyIwLjAwIiwiMC4wMCIsNzgwLDQ1Nl0.bankss.com.png" alt="Mobile Threat" class="news-img">
+          <span class="news-badge">ALERT</span>
+        </div>
+        <div class="news-content">
+          <div class="news-date"><i class="far fa-clock"></i> April 28, 2025</div>
+          <h3 class="news-headline">New SMS Phishing Attack Bypasses Traditional Security Filters</h3>
+          <p class="news-excerpt">Mobile users are being targeted with messages that appear to come from legitimate contacts. The technique exploits a vulnerability in...</p>
+          <a href="#" class="read-more" data-article="6">Continue Reading</a>
+        </div>
+      </article>
+
+      
+      <article class="news-card" data-aos="fade-up" data-aos-delay="500">
+        <div class="news-img-container">
+          <img src="https://passpack.com/wp-content/uploads/2024/11/QR-Code-Phishing.jpg" alt="Mobile Threat" class="news-img">
+          <span class="news-badge">ALERT</span>
+        </div>
+        <div class="news-content">
+          <div class="news-date"><i class="far fa-clock"></i> April 9, 2025</div>
+          <h3 class="news-headline">Fake QR Codes Planted on Public Posters Lead to Phishing Sites</h3>
+          <p class="news-excerpt">bercriminals are placing fake QR codes on posters, restaurant menus, and public bulletin boards. When scanned, these codes redirect users to lookalike login pages...</p>
+          <a href="#" class="read-more" data-article="6">Continue Reading</a>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Newsletter -->
+  <section class="newsletter" data-aos="fade-up">
+    <div class="newsletter-container">
+      <h3 class="newsletter-title">Get Security Alerts Directly</h3>
+      <p class="newsletter-desc">Subscribe to our newsletter and receive weekly updates on the latest phishing threats, security tips, and protection strategies.</p>
+      <form class="newsletter-form">
+        <input type="email" class="newsletter-input" placeholder="Your email address" required>
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- News Modal -->
+  <div class="news-modal" id="news-modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <img src="" alt="Article Image" class="modal-img" id="modal-img">
+      <div class="modal-body">
+        <div class="modal-date" id="modal-date"></div>
+        <h2 class="modal-title" id="modal-title"></h2>
+        <div class="modal-text" id="modal-text">
+          <!-- Article content will be inserted here -->
+        </div>
+        <div class="modal-tags">
+          <span class="modal-tag">Phishing</span>
+          <span class="modal-tag">Security Alert</span>
+          <span class="modal-tag">2025 Trends</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer data-aos="fade-up">
+    <div class="container">
+      &copy; <span id="year"></span> Spring Security. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Sample news articles data
+    const articles = {
+      1: {
+        title: "New Phishing Kit Bypasses Two-Factor Protections",
+        date: "May 15, 2025",
+        image: "images/new-phishing-kit.jpg",
+        content: `
+          <p>A new phishing kit bypasses two-factor authentication through session hijacking and real-time credential interception from services like Gmail, Yahoo, AOL and Microsoft 365.</p>
+          
+          <h3>How the Attack Works</h3>
+          <p>First advertised on cybercrime forums in January, Astaroth uses an evilginx-style reverse proxy to intercept and manipulate traffic between victims and legitimate authentication, according to a report by SlashNext.</p>
+          
+          <p>Acting as a man-in-the-middle, it captures login credentials, tokens, and session cookies in real time, rendering two-factor protections useless."</p>
+          
+          <p>Unlike traditional phishing kits that rely on static fake login pages to steal primary credentials, Astaroth intercepts authentication data the moment it is entered, enabling cybercriminals to gain full access to compromised accounts instantly, without needing additional authentication from victims.</p>
+          
+          <h3>Protection Recommendations</h3>
+          <ul>
+            <li>Never enter OTPs on websites that you reached via a link in an SMS</li>
+            <li>Always manually type your bank's URL or use bookmarks</li>
+            <li>Enable transaction notifications for all account activity</li>
+            <li>Use banking apps instead of mobile browsers when possible</li>
+            <li>Report suspicious messages to your bank immediately</li>
+          </ul>
+          
+          <p>Financial institutions are working on implementing more secure authentication methods, including push notifications with number matching and biometric verification, to combat these advanced attacks.</p>
+        `
+      },
+      2: {
+        title: "Social Media Phishing Attacks Increase by 300% in Q1 2025",
+        date: "May 12, 2025",
+        image: "https://media2.malaymail.com/uploads/articles/2020/2020-07/pc_scam_syndicate_160720a.jpg",
+        content: `
+          <p>The first quarter of 2025 has seen an unprecedented surge in social media phishing attacks, with cybersecurity firms reporting a 300% increase compared to Q4 2024. The attacks primarily target popular platforms including Facebook, Instagram, LinkedIn, and newer networks like Threads.</p>
+          
+          <h3>New Attack Vectors</h3>
+          <p>Attackers are exploiting several platform features to conduct their campaigns:</p>
+          
+          <p><strong>Verification Scams:</strong> With platforms offering paid verification badges, scammers are sending fake "Verification Approved" messages that steal credentials when users attempt to "claim" their badge.</p>
+          
+          <p><strong>AI-Generated Content:</strong> Phishers are using AI to create convincing fake profiles that build trust before sending malicious links. These profiles often impersonate real employees of tech companies.</p>
+          
+          <p><strong>DM Phishing:</strong> Direct messages appearing to come from friends (but actually from compromised accounts) contain links to "view this funny video" that lead to credential-harvesting pages.</p>
+          
+          <h3>Protecting Yourself</h3>
+          <p>To avoid falling victim to these scams:</p>
+          <ul>
+            <li>Enable two-factor authentication on all social media accounts</li>
+            <li>Be wary of messages about account verification or policy violations</li>
+            <li>Check URLs carefully before entering credentials</li>
+            <li>Don't trust messages from contacts that seem out of character</li>
+            <li>Use unique passwords for each social media account</li>
+          </ul>
+          
+          <p>Platforms are implementing new AI detection systems to identify and remove phishing accounts, but users remain the first line of defense.</p>
+        `
+      },
+      3: {
+  title: "Fake Invoice Scams Cost Businesses $2.3 Million Last Month",
+  date: "May 8, 2025",
+  image: "https://cdn4.premiumread.com/?url=https://malaymail.com/malaymail/uploads/images/2025/03/03/263853.JPG&w=1000&q=100&f=jpg&t=6", // Replace with your actual path
+  content: `
+    <p>A wave of PDF invoice scams has hit businesses, costing them over $2.3 million in damages last month alone. These phishing campaigns use malicious attachments that appear to be genuine invoices from vendors or clients.</p>
+    
+    <h3>How the Scam Works</h3>
+    <p>The attacker sends an email that appears to come from a known supplier. The attached PDF contains a link or script that installs malware or redirects the user to a phishing page.</p>
+
+    <p>Once clicked, it can lead to credential theft, ransomware infection, or unauthorized bank transfers initiated by the victim.</p>
+
+    <h3>Industries Targeted</h3>
+    <ul>
+      <li>Finance & Accounting Departments</li>
+      <li>Procurement Teams</li>
+      <li>Small Businesses without strong email filtering</li>
+    </ul>
+
+    <h3>How to Prevent It</h3>
+    <ul>
+      <li>Verify invoice requests via phone or internal systems</li>
+      <li>Use email filters that block suspicious attachments</li>
+      <li>Train employees to recognize unusual invoice formats</li>
+      <li>Regularly update anti-malware and endpoint protection</li>
+    </ul>
+
+    <p>Security researchers warn that as AI-generated invoice templates become more realistic, verifying every financial transaction request will be more important than ever.</p>
+  `
+    },
+    4: {
+  title: "2025 Phishing Statistics Reveal Alarming New Trends",
+  date: "May 5, 2025",
+  image: "https://themalaysianreserve.com/wp-content/uploads/2025/01/MHO-SCAM013.jpeg", // Replace with your actual path
+  content: `
+    <p>Phishing attacks have reached record highs in the first half of 2025, driven by increasingly sophisticated techniques and broader targeting strategies.</p>
+
+    <h3>Key Findings</h3>
+    <ul>
+      <li>Email-based phishing remains the top vector (65%)</li>
+      <li>Mobile phishing (SMS/WhatsApp) has doubled compared to 2024</li>
+      <li>Credential harvesting is the main goal in 72% of attacks</li>
+    </ul>
+
+    <p>Attackers are leveraging emerging topics like AI regulations, crypto taxes, and government subsidies to create believable phishing lures. Remote work culture and cloud service reliance have increased risk exposure for businesses.</p>
+
+    <h3>Recommendations</h3>
+    <ul>
+      <li>Increase employee security awareness training</li>
+      <li>Deploy AI-based phishing detection systems</li>
+      <li>Enforce zero-trust network policies</li>
+    </ul>
+
+    <p>Experts stress that staying ahead of phishing trends is essential as threats continue evolving faster than traditional defenses.</p>
+  `
+  },
+  5: {
+  title: "New SMS Phishing Attack Bypasses Traditional Security Filters",
+  date: "April 28, 2025",
+  image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2024/02/38.png", // Replace with your actual path
+  content: `
+    <p>Mobile users are being targeted with convincing SMS messages that appear to come from legitimate companies or banks. These messages exploit URL shorteners and mimic real alerts, prompting victims to click links and enter credentials.</p>
+
+    <h3>Attack Example</h3>
+    <p>"Your account is being verified due to suspicious activity. Visit [link] to confirm or risk suspension."</p>
+
+    <h3>Why It’s Effective</h3>
+    <ul>
+      <li>Uses familiar sender names or spoofed IDs</li>
+      <li>Bypasses email filters by using SMS instead</li>
+      <li>Targets on-the-go users who are less cautious</li>
+    </ul>
+
+    <h3>How to Protect Yourself</h3>
+    <ul>
+      <li>Never click links from unknown senders</li>
+      <li>Verify messages with your provider or bank directly</li>
+      <li>Use apps instead of links for transactions</li>
+    </ul>
+
+    <p>Telecom regulators urge users to report SMS phishing to local cybersecurity hotlines and avoid interacting with links from unexpected texts.</p>
+  `
+},
+    };
+
+    // Initialize modal functionality
+    document.querySelectorAll('.read-more').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const articleId = this.getAttribute('data-article');
+        const article = articles[articleId];
+        
+        document.getElementById('modal-title').textContent = article.title;
+        document.getElementById('modal-date').textContent = article.date;
+        document.getElementById('modal-img').src = article.image;
+        document.getElementById('modal-text').innerHTML = article.content;
+        
+        document.getElementById('news-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // Close modal
+    document.querySelector('.modal-close').addEventListener('click', function() {
+      document.getElementById('news-modal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+      if (e.target === document.getElementById('news-modal')) {
+        document.getElementById('news-modal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // Three.js Background
+    const canvas = document.getElementById('bgCanvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); 
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene(); 
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); 
+    camera.position.z = 5;
+    
+    // Create cyber grid
+    const gridGeometry = new THREE.BufferGeometry();
+    const gridMaterial = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.1 });
+    const gridSize = 20;
+    const gridDivisions = 20;
+    const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x00ffff, 0x00ffff);
+    gridHelper.material.opacity = 0.1;
+    gridHelper.material.transparent = true;
+    scene.add(gridHelper);
+    
+    // Create floating cyber elements
+    const cyberElements = [];
+    const elementGeometry = new THREE.TetrahedronGeometry(0.1, 0);
+    const elementMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
+    
+    for (let i = 0; i < 50; i++) {
+      const element = new THREE.Mesh(elementGeometry, elementMaterial);
+      element.position.x = (Math.random() - 0.5) * 10;
+      element.position.y = (Math.random() - 0.5) * 10;
+      element.position.z = (Math.random() - 0.5) * 10;
+      element.userData = {
+        speed: Math.random() * 0.02 + 0.01,
+        direction: new THREE.Vector3(
+          Math.random() - 0.5,
+          Math.random() - 0.5,
+          Math.random() - 0.5
+        ).normalize()
+      };
+      scene.add(element);
+      cyberElements.push(element);
+    }
+    
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      // Rotate grid
+      gridHelper.rotation.x += 0.001;
+      gridHelper.rotation.y += 0.002;
+      
+      // Move cyber elements
+      cyberElements.forEach(element => {
+        element.position.addScaledVector(element.userData.direction, element.userData.speed);
+        
+        // Bounce off imaginary walls
+        if (Math.abs(element.position.x) > 5) element.userData.direction.x *= -1;
+        if (Math.abs(element.position.y) > 5) element.userData.direction.y *= -1;
+        if (Math.abs(element.position.z) > 5) element.userData.direction.z *= -1;
+        
+        // Random direction changes
+        if (Math.random() < 0.01) {
+          element.userData.direction.add(
+            new THREE.Vector3(
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2
+            )
+          ).normalize();
+        }
+      });
+      
+      renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Initialize AOS
+    AOS.init({ duration: 1000, once: true });
+
+    // Scroll progress bar
+    window.addEventListener('scroll', () => {
+      const percent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      document.getElementById('progress-bar').style.width = percent + '%';
+    });
+
+    // Play click sound on nav link click
+    const clickSound = document.getElementById('clickSound');
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      });
+    });
+
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

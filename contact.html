@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="contact, cybersecurity, support" />
+  <meta name="description" content="Contact Spring Security Team" />
+  <meta name="author" content="Spring Security Team" />
+  <title>Spring - Contact Us</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <!-- AOS CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <style>
+    /* Inherit all base styles from main theme */
+    /* Background Canvas */
+    #bgCanvas {
+      width: 100% !important;
+    }
+    /* Contact Page Specific Styles */
+    .contact-section {
+      margin-top:-796px;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      width:100%;
+      z-index: 0;
+    }
+    
+    .contact-container {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .contact-card {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #0ff;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transform-style: preserve-3d;
+      transition: all 0.5s ease;
+    }
+    
+    .contact-card:hover {
+      transform: translateY(-10px) rotateX(5deg);
+      box-shadow: 0 15px 40px rgba(0, 255, 255, 0.3);
+    }
+    
+    .contact-icon {
+      font-size: 2.5rem;
+      color: #0ff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .contact-icon:hover {
+      transform: scale(1.2);
+    }
+    
+    .form-control {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid #0ff;
+      color: #fff;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      background: rgba(0, 0, 0, 0.7);
+      border-color: #0ff;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      color: #fff;
+    }
+    
+    .floating-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+    
+    .line {
+      position: absolute;
+      background: rgba(0, 255, 255, 0.1);
+      animation: float 15s infinite linear;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+      }
+    }
+    
+    .pulse-circle {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 255, 255, 0.3);
+      animation: pulse 4s infinite ease-out;
+      z-index: -1;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(0.8);
+        opacity: 0.7;
+      }
+      70% {
+        transform: scale(1.3);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+    }
+    
+    .social-links a {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      border-radius: 50%;
+      background: rgba(0, 255, 255, 0.1);
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .social-links a:hover {
+      background: #0ff;
+      color: #000;
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+    }
+    
+    .submit-btn {
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #0ff;
+      background: transparent;
+      color: #0ff;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 12px 30px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+    
+    .submit-btn:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+    
+    .submit-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+      transition: 0.5s;
+    }
+    
+    .submit-btn:hover::after {
+      left: 100%;
+    }
+
+       /* Footer */
+    footer {
+      background: #000;
+      color: #aaa;
+      text-align: center;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+  <canvas id="bgCanvas"></canvas>
+  <audio id="clickSound" src="sounds/click.mp3" preload="auto"></audio>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#"> <img src="images/logo.png" height="40" alt="logo"><span>Spring Security</span></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="news.html">News</a></li>
+          <li class="nav-item"><a class="nav-link" href="case.html">Cases</a></l>
+          <li class="nav-item"><a class="nav-link" href="quiz.html">Quiz</a></li>
+          <li class="nav-item"><a class="nav-link" href="org.html">Organization</a></li>
+          <li class="nav-item"><a class="nav-link active" href="contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="more.html">More</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact-section section-dark">
+    <div class="floating-lines" id="floatingLines"></div>
+    <div class="container contact-container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8" data-aos="zoom-in">
+          <div class="contact-card">
+            <div class="text-center mb-5">
+              <i class="fas fa-paper-plane contact-icon" data-aos="fade-down"></i>
+              <h2 class="text-cyan-400 mb-3">Get In Touch</h2>
+              <p class="text-muted">We're here to help. Send us a message.</p>
+            </div>
+            
+            <form id="contactForm">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Your Name" required>
+              </div>
+              <div class="form-group">
+                <input type="email" class="form-control" placeholder="Your Email" required>
+              </div>
+              <div class="form-group">
+                <textarea class="form-control" rows="4" placeholder="Your Message" required></textarea>
+              </div>
+              <div class="text-center mt-4">
+                <button type="submit" class="submit-btn">
+                  <span>Send Message</span>
+                </button>
+              </div>
+            </form>
+            
+            <div class="text-center mt-5">
+              <h5 class="text-cyan-400 mb-3">Or Connect With Us</h5>
+              <div class="social-links">
+                <a href="#" data-aos="zoom-in" data-aos-delay="100"><i class="fab fa-twitter"></i></a>
+                <a href="#" data-aos="zoom-in" data-aos-delay="200"><i class="fab fa-linkedin"></i></a>
+                <a href="#" data-aos="zoom-in" data-aos-delay="300"><i class="fab fa-github"></i></a>
+                <a href="#" data-aos="zoom-in" data-aos-delay="400"><i class="fab fa-discord"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Floating pulse circles -->
+    <div class="pulse-circle" style="width: 300px; height: 300px; top: 20%; left: 10%;"></div>
+    <div class="pulse-circle" style="width: 200px; height: 200px; top: 60%; left: 80%; animation-delay: 1s;"></div>
+    <div class="pulse-circle" style="width: 150px; height: 150px; top: 80%; left: 20%; animation-delay: 2s;"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer data-aos="fade-up">
+    <div class="container">
+      &copy; <span id="year"></span> Spring Security. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Initialize AOS
+    AOS.init({ duration: 1000, once: true });
+    
+    // Create floating lines animation
+    function createFloatingLines() {
+      const container = document.getElementById('floatingLines');
+      const lineCount = 15;
+      
+      for (let i = 0; i < lineCount; i++) {
+        const line = document.createElement('div');
+        line.classList.add('line');
+        
+        // Random properties
+        const width = Math.random() * 4 + 1;
+        const height = Math.random() * 200 + 50;
+        const left = Math.random() * 100;
+        const animationDuration = Math.random() * 10 + 10;
+        const animationDelay = Math.random() * 5;
+        const opacity = Math.random() * 0.3 + 0.1;
+        
+        // Apply styles
+        line.style.width = `${width}px`;
+        line.style.height = `${height}px`;
+        line.style.left = `${left}%`;
+        line.style.animationDuration = `${animationDuration}s`;
+        line.style.animationDelay = `${animationDelay}s`;
+        line.style.opacity = opacity;
+        
+        container.appendChild(line);
+      }
+    }
+    
+    // Form submission animation
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Play click sound
+      const clickSound = document.getElementById('clickSound');
+      if (clickSound) {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      }
+      
+      // Create a ripple effect
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const ripple = document.createElement('span');
+      ripple.classList.add('ripple-effect');
+      
+      submitBtn.appendChild(ripple);
+      
+      // Remove after animation
+      setTimeout(() => {
+        ripple.remove();
+        
+        // Show success message
+        const originalText = submitBtn.querySelector('span').textContent;
+        submitBtn.querySelector('span').textContent = 'Message Sent!';
+        submitBtn.disabled = true;
+        submitBtn.style.backgroundColor = '#00ffaa';
+        submitBtn.style.borderColor = '#00ffaa';
+        
+        // Reset after delay
+        setTimeout(() => {
+          submitBtn.querySelector('span').textContent = originalText;
+          submitBtn.disabled = false;
+          submitBtn.style.backgroundColor = 'transparent';
+          submitBtn.style.borderColor = '#0ff';
+        }, 3000);
+      }, 1000);
+    });
+    
+    // Initialize everything when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      createFloatingLines();
+      
+      // Set footer year
+      document.getElementById('year').textContent = new Date().getFullYear();
+      
+      // Play click sound on nav link click
+      const clickSound = document.getElementById('clickSound');
+      document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          clickSound.currentTime = 0;
+          clickSound.play();
+        });
+      });
+      
+      // Progress bar
+      window.addEventListener('scroll', () => {
+        const percent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+        document.getElementById('progress-bar').style.width = percent + '%';
+      });
+      
+      // Three.js background (same as main page)
+      const canvas = document.getElementById('bgCanvas');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); 
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      const scene = new THREE.Scene(); 
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); 
+      camera.position.z = 5;
+      const knot = new THREE.Mesh(
+        new THREE.TorusKnotGeometry(2, 0.5, 100, 16), 
+        new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, opacity: 0.2, transparent: true })
+      );
+      scene.add(knot);
+      
+      function animate() { 
+        requestAnimationFrame(animate); 
+        knot.rotation.x += 0.005; 
+        knot.rotation.y += 0.01; 
+        renderer.render(scene, camera); 
+      } 
+      animate();
+      
+      window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight); 
+        camera.aspect = window.innerWidth / window.innerHeight; 
+        camera.updateProjectionMatrix(); 
+      });
+    });
+  </script>
+</body>
+</html>
